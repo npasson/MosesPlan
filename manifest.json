@@ -1,0 +1,24 @@
+{
+  "manifest_version": 2,
+  "name": "MosesPlan",
+  "version": "0.1",
+  "description": "Gives users the ability to add persistent custom events to 'Moseskonto' schedule of the Technical University of Berlin.",
+  "content_scripts": [
+    {
+      "matches": [
+        "*://moseskonto.tu-berlin.de/*"
+      ],
+      "js": [
+        "lib/jquery.min.js",
+        "scripts/i18n.js",
+        "scripts/event_manager.js",
+        "scripts/render_manager.js",
+        "scripts/popup_manager.js",
+        "scripts/index.js"
+      ]
+    }
+  ],
+  "permissions": [
+    "storage"
+  ]
+}
