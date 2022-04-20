@@ -26,16 +26,16 @@ function toggleButton_onClick( e ) {
 	let $this = $( this );
 
 	if ( $this.hasClass( 'active' ) ) {
+		$this.toggleClass( 'active' );
 		$( '.mosesplan__event' ).each( function () {
-			$( this ).css( 'display', 'none' );
+			$( this ).remove();
 		} );
-	} else {
-		$( '.mosesplan__event' ).each( function () {
-			$( this ).css( 'display', 'block' );
-		} );
-	}
 
-	$this.toggleClass( 'active' );
+		render( [] );
+	} else {
+		$this.toggleClass( 'active' );
+		loadEvents().then( render );
+	}
 }
 
 /**
@@ -74,6 +74,13 @@ function main() {
 	let $calendar = $( '.moses-calendar' );
 	if ( $calendar.length === 0 ) {
 		// wrong page
+		return;
+	}
+
+	// make sure we stop at single day and custom range... for now
+	let $main = $( '#main' );
+	if ( $main.find( '#freechoice' ).length > 0
+	     || $main.find( '#single-day' ).length > 0 ) {
 		return;
 	}
 

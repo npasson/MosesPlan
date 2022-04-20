@@ -1,11 +1,14 @@
+const RENDER_PIXELS_PER_HOUR = 40;
+const RENDER_HOUR_OFFSET     = 8;
+
 /**
  * Creates an event <div> suitable for inserting into the table.
  * @param event The event data to insert into the div.
  * @returns {*} A HTMLElement (_not_ jQuery) of the block.
  */
 function getBlock( event ) {
-	let top_offset = ( event.start - 8 ) * 40;
-	let height     = ( event.end - event.start ) * 40;
+	let top_offset = ( event.start - RENDER_HOUR_OFFSET ) * RENDER_PIXELS_PER_HOUR;
+	let height     = ( event.end - event.start ) * RENDER_PIXELS_PER_HOUR;
 
 	let $event = $( `
 		<div class="moses-calendar-event-wrapper mosesplan__event" 
@@ -36,9 +39,19 @@ function getBlock( event ) {
  * @param events {Array[Event]} The list of events to render.
  */
 function render( events ) {
-	// console.log( 'Rendering.' );
+	$( '.mosesplan__event' ).remove();
 
-	if ( !events || ( typeof events === 'object' && Object.getOwnPropertyNames( events ).length === 0 ) ) {
+	let $days_wrapper = $( '.moses-calendar-days' );
+	let days          = [];
+	$days_wrapper.children().each( function () {
+		days.push( $( $( this ).find( '.moses-calendar-day-body-inner' )[0] ) );
+	} );
+
+	if ( !events
+	     || ( typeof events === 'object' && Object.getOwnPropertyNames( events ).length === 0 )
+	     || ( events instanceof Array && events.length === 0 )
+	) {
+		cleanEvents( days );
 		return;
 	}
 
@@ -46,21 +59,13 @@ function render( events ) {
 		events = events['mosesplan_events'];
 	}
 
-	$( '.mosesplan__event' ).remove();
-
-	let $days_wrapper = $( '.moses-calendar-days' );
-
-	let days = [];
-
-	$days_wrapper.children().each( function () {
-		days.push( $( $( this ).find( '.moses-calendar-day-body-inner' )[0] ) );
-	} );
-
 	for ( const event of events ) {
 		let weekday = event.weekday;
 
 		let $event = getBlock( event );
 		days[weekday].append( $event );
 	}
+
+	cleanEvents( days );
 }
 
