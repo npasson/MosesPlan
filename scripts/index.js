@@ -70,19 +70,8 @@ function createButtonArray( $mosesplan ) {
 /**
  * Runs the main event loop. Binds all buttons and renders events.
  */
-function main() {
+function setup() {
 	let $calendar = $( '.moses-calendar' );
-	if ( $calendar.length === 0 ) {
-		// wrong page
-		return;
-	}
-
-	// make sure we stop at single day and custom range... for now
-	let $main = $( '#main' );
-	if ( $main.find( '#freechoice' ).length > 0
-	     || $main.find( '#single-day' ).length > 0 ) {
-		return;
-	}
 
 	let $prevOptions = $( '#mosesplan' );
 	if ( $prevOptions.length !== 0 ) {
@@ -112,13 +101,31 @@ function main() {
 	loadEvents().then( render );
 }
 
-// make sure to re-run main if calendar is re-created
-$( 'body' ).on( 'DOMNodeInserted', function ( e ) {
-	let $target = $( e.target );
-	if ( $target.find( '.moses-calendar' ).length !== 0 ) {
-		setTimeout( main );
+function main() {
+	// stop if page is wrong
+	let $calendar = $( '.moses-calendar' );
+	if ( $calendar.length === 0 ) {
+		// wrong page
+		return;
 	}
-} );
+
+	// make sure we stop at single day and custom range... for now
+	let $main = $( '#main' );
+	if ( $main.find( '#freechoice' ).length > 0
+	     || $main.find( '#single-day' ).length > 0 ) {
+		return;
+	}
+
+	// make sure to re-run main if calendar is re-created
+	$( 'body' ).on( 'DOMNodeInserted', function ( e ) {
+		let $target = $( e.target );
+		if ( $target.find( '.moses-calendar' ).length !== 0 ) {
+			setTimeout( setup );
+		}
+	} );
+
+	setup();
+}
 
 // and finally, add main as a document.ready() callback.
 $( main );
