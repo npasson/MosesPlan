@@ -60,7 +60,6 @@ Du kannst auch die Anzeige von eigenen Events ein- und ausschalten, und nicht me
 ## Known Issues
 
 * Events in Delete modal are sorted by Added Time. This means it can be hard to find an issue.
-* Events do not resize the width of themselves or other events to fit in yet.
 
 ## License
 
