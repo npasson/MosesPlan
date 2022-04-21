@@ -43,7 +43,9 @@ function getBlock( event, type = 'custom' ) {
 
 	let $event = $( `
 		<div class="moses-calendar-event-wrapper mosesplan__event mosesplan__event--${type}" 
-		     style="width: 100%; height: ${height}px; top: ${top_offset}px; left: 0.000000%;">
+		     style="width: 100%; height: ${height}px; top: ${top_offset}px; left: 0.000000%;"
+		     data-uuid="${event.uuid}"
+		     >
 			<div class="moses-calendar-event ellipsis">
 				<span class="ellipsis">${event.name}</span>
 				<br><small class="ellipsis">${event.location}</small>
@@ -144,25 +146,20 @@ function render( events ) {
 	} );
 
 	loadValue( Settings.RENDER_EVENTS ).then( value => {
-		value = value[Settings.RENDER_EVENTS];
-		if ( value
-		     && events
-		     && ( ( typeof events === 'object' && Object.getOwnPropertyNames( events ).length !== 0 )
-		          || ( events instanceof Array && events.length !== 0 ) )
-		) {
+		if ( value && events ) {
 			// render custom events if everything is okay
-
-			if ( typeof events === 'object' ) {
-				events = events['mosesplan_events'];
-			}
-
 			for ( const event of events ) {
 				let weekday = event.weekday;
 
 				let $event = $( getBlock( event ) );
 
-				$event.find( '.moses-calendar-event' ).on( 'mouseover', ( e ) => handleEventMouseover( e, event ) );
-				$event.find( '.moses-calendar-event' ).on( 'mouseout', handleEventMouseout );
+				$event.find( '.moses-calendar-event' )
+				      .on( 'mouseover', ( e ) =>
+					      handleEventMouseover( e, event ) );
+
+				$event.find( '.moses-calendar-event' )
+				      .on( 'mouseout',
+					      handleEventMouseout );
 
 				days[weekday].append( $event );
 			}
@@ -172,7 +169,6 @@ function render( events ) {
 		cleanEvents( days );
 
 		loadValue( Settings.RENDER_TUTORIALS ).then( value => {
-			value = value[Settings.RENDER_TUTORIALS];
 			if ( !value ) {
 				return;
 			}

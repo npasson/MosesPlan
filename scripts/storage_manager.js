@@ -1,8 +1,19 @@
 /**
+ * Generates a UUIDv4 using the Crypto API. (No, this will not mine Bitcoin to generate a UUID.)
+ * @return {string} A UUIDv4
+ */
+function uuidv4() {
+	return ( [ 1e7 ] + -1e3 + -4e3 + -8e3 + -1e11 ).replace( /[018]/g, c =>
+		( c ^ crypto.getRandomValues( new Uint8Array( 1 ) )[0] & 15 >> c / 4 ).toString( 16 )
+	);
+}
+
+/**
  * An Event class to serialize event data.
  */
 class Event {
-	constructor( name, location, host, weekday, start_hour, end_hour ) {
+	constructor( uuid, name, location, host, weekday, start_hour, end_hour ) {
+		this.uuid     = uuid;
 		this.name     = name;
 		this.location = location;
 		this.host     = host;
@@ -37,7 +48,11 @@ if ( typeof browser !== 'undefined' ) {
 	// FIREFOX
 
 	loadValue = function ( key ) {
-		return browser.storage.local.get( key );
+		return new Promise( resolve => {
+			browser.storage.local.get( key ).then( ( data ) => {
+				resolve( data[key] );
+			} );
+		} );
 	};
 
 	saveValue = function ( key, value ) {
@@ -51,7 +66,7 @@ if ( typeof browser !== 'undefined' ) {
 	loadValue = function ( key ) {
 		return new Promise( resolve => {
 			chrome.storage.local.get( [ key ], function ( result ) {
-				resolve( result );
+				resolve( result[key] );
 			} );
 		} );
 	};
@@ -72,7 +87,23 @@ if ( typeof browser !== 'undefined' ) {
  *                                             set (or undefined) to the event list.
  */
 function loadEvents() {
-	return loadValue( 'mosesplan_events' );
+	// this has backwards compatibility in case some events don't have a UUID yet
+	return new Promise( resolve => {
+		loadValue( 'mosesplan_events' ).then( events => {
+			if ( typeof events === 'undefined' ) {
+				resolve( events );
+				return;
+			}
+
+			for ( const event of events ) {
+				if ( !( 'uuid' in event ) ) {
+					event['uuid'] = uuidv4();
+				}
+			}
+
+			resolve( events );
+		} );
+	} );
 }
 
 /**
@@ -95,28 +126,12 @@ function createEvent( ...args ) {
 	let event = new Event( ...args );
 
 	loadEvents().then( events => {
-		// this section does a bunch of stuff because
-		// sometimes local storage returns an empty object
-		// and not, as expected, an object with a key
-		// that's just empty. There's probably a better way,
-		// but this works and since createEvent() is not
-		// called in a time-sensitive context, it can be
-		// more expensive than needed.
-
-		if ( !events || ( typeof events === 'object' && Object.getOwnPropertyNames( events ).length === 0 ) ) {
-			events = [];
-		}
-
-		if ( typeof events === 'object' ) {
-			events = events['mosesplan_events'];
-		}
-
 		if ( typeof events === 'undefined' ) {
 			events = [];
 		}
 
 		events.push( event );
 
-		saveEvents( events ).then( loadEvents ).then( render );
+		saveEvents( events ).then( loadEvents ).then( render ).catch( e => console.log( e ) );
 	} );
 }

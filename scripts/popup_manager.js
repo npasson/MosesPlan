@@ -94,7 +94,10 @@ function handleAddEvent( event ) {
 		return;
 	}
 
-	createEvent( name, location, host, weekday, start, end );
+	let uuid = uuidv4();
+	console.log( uuid );
+
+	createEvent( uuid, name, location, host, weekday, start, end );
 }
 
 /**
@@ -228,12 +231,17 @@ function handleDeleteEvent( event ) {
 
 	event.preventDefault();
 
-	let index = parseInt( data.delete.value );
+	let uuid = data.delete.value;
 
 	loadEvents().then(
 		events => {
-			events = events['mosesplan_events'];
-			events.splice( index, 1 );
+			for ( let i = 0; i < events.length; i++ ) {
+				if ( events[i].uuid === uuid ) {
+					events.splice( i, 1 );
+					break;
+				}
+			}
+
 			saveEvents( events ).then( loadEvents ).then( render ).then( showDeletePopup );
 		}
 	);
@@ -268,11 +276,7 @@ function showDeletePopup() {
 	$popup.append( $popup_form );
 
 	loadEvents().then( events => {
-		if ( typeof events === 'object' ) {
-			events = events['mosesplan_events'];
-		}
-
-		if ( typeof events === 'undefined' || events.length === 0 ) {
+		if ( !events || events.length === 0 ) {
 			$popup = applyPopupStyles( $popup );
 			$( '.mosesplan' ).append( $popup );
 			return;
@@ -280,12 +284,42 @@ function showDeletePopup() {
 
 		let $dropdown = $popup.find( '#delete' );
 
-		for ( let i = 0; i < events.length; i++ ) {
-			let event = events[i];
+		events.sort( ( lhs, rhs ) => {
+			// return < 0 if lhs < rhs
+			// return = 0 if lhs = rhs
+			// return > 0 if lhs > rhs
 
+			if ( lhs.weekday < rhs.weekday ) {
+				return -1;
+			}
+
+			if ( lhs.weekday > rhs.weekday ) {
+				return 1;
+			}
+
+			if ( lhs.start < rhs.start ) {
+				return -1;
+			}
+
+			if ( lhs.start > rhs.start ) {
+				return 1;
+			}
+
+			if ( lhs.end < rhs.end ) {
+				return -1;
+			}
+
+			if ( lhs.end > rhs.end ) {
+				return 1;
+			}
+
+			return 0;
+		} );
+
+		for ( const event of events ) {
 			let weekday = getWeekdayString( event.weekday );
 
-			$dropdown.append( new Option( `[${weekday} ${event.start}-${event.end}] ${event.name}`, `${i}` ) );
+			$dropdown.append( new Option( `[${weekday} ${event.start}-${event.end}] ${event.name}`, `${event.uuid}` ) );
 		}
 	} );
 

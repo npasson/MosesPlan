@@ -75,7 +75,7 @@ function tutorialButton_onClick( e ) {
 	let $this = $( this );
 
 	loadValue( Settings.RENDER_TUTORIALS ).then( value => {
-		if ( typeof value[Settings.RENDER_TUTORIALS] === 'undefined' ) {
+		if ( typeof value === 'undefined' ) {
 			$( '.mosesplan__render-events-hint' ).remove();
 		}
 
@@ -203,7 +203,7 @@ function setup( safe = false ) {
 
 	// if RENDER_EVENTS is set, show button as pressed
 	loadValue( Settings.RENDER_EVENTS ).then( value => {
-		if ( value[Settings.RENDER_EVENTS] ) {
+		if ( value ) {
 			$toggleButton.addClass( 'active' );
 		}
 	} );
@@ -217,7 +217,7 @@ function setup( safe = false ) {
 		// if RENDER_TUTORIALS is set, show button as pressed
 		// if RENDER_TUTORIALS is undefined, show short privacy hint
 		loadValue( Settings.RENDER_TUTORIALS ).then( value => {
-			if ( typeof value[Settings.RENDER_TUTORIALS] === 'undefined' ) {
+			if ( typeof value === 'undefined' ) {
 				$mosesplan.append( `
 				<div class="mosesplan__render-events-hint"
 				     style="opacity: 70%; font-size: 0.8em; margin-top: 5px; margin-bottom: 5px">
@@ -227,7 +227,7 @@ function setup( safe = false ) {
 				return;
 			}
 
-			if ( value[Settings.RENDER_TUTORIALS] ) {
+			if ( value ) {
 				$tutorialButton.addClass( 'active' );
 			}
 		} );

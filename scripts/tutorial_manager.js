@@ -54,7 +54,7 @@ function parseTutorialAnswer( data ) {
 
 			let host = 'TU Berlin';
 
-			let event = new Event( name, location, host, i, start, end );
+			let event = new Event( null, name, location, host, i, start, end );
 			events.push( event );
 		} );
 
