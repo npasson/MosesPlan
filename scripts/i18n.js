@@ -11,6 +11,7 @@ function getLangObject( language ) {
 				addButtonTitle: '➕ Neues Event',
 				deleteButtonTitle: '➖ Event löschen',
 				toggleButtonTitle: 'Eigene Events anzeigen',
+				tutorialButtonTitle: '+ Tutorien',
 				addEventTitle: 'Neues Event',
 				deleteEventTitle: 'Event löschen',
 				addEventSubmitButton: 'Hinzufügen',
@@ -33,11 +34,15 @@ function getLangObject( language ) {
 				event_location_placeholder: 'z.B. Home-Office',
 				event_host: 'Eventveranstalter',
 				event_host_placeholder: 'z.B. Max Mustermann',
+				event_time: 'Eventzeit',
 				start_time: 'Beginn',
 				end_time: 'Ende',
 				error_no_weekday: 'Bitte wähle einen Wochentag.',
-				error_spacetime: 'Bitte lass die Raumzeit intakt. (Eventende muss nach Eventbeginn sein)'
-
+				error_spacetime: 'Bitte lass die Raumzeit intakt. (Eventende muss nach Eventbeginn sein)',
+				tutorial: 'Tutorium',
+				confirm_loading: 'Diese Option verwendet deinen Session-Cookie, um die Tutorien von Moses abzufragen.\n\n'
+				                 + 'Wenn du nicht weißt, was das heißt, brauchst du dir keine Sorgen zu machen,'
+				                 + ' aber Technik-interessierte Menschen wollen vielleicht wählen.'
 			};
 		case 'en':
 		default:
@@ -45,6 +50,7 @@ function getLangObject( language ) {
 				addButtonTitle: '➕ Add new event',
 				deleteButtonTitle: '➖ Delete event',
 				toggleButtonTitle: 'Show custom events',
+				tutorialButtonTitle: '+ Tutorials',
 				addEventTitle: 'New event',
 				deleteEventTitle: 'Delete event',
 				addEventSubmitButton: 'Add Event',
@@ -67,10 +73,14 @@ function getLangObject( language ) {
 				event_location_placeholder: 'e.g. Home Office',
 				event_host: 'Event host',
 				event_host_placeholder: 'e.g. John Doe',
+				event_time: 'Event time',
 				start_time: 'Start',
 				end_time: 'End',
 				error_no_weekday: 'Please choose a day of the week.',
-				error_spacetime: 'Please leave spacetime intact. (Event end has to be after event start)'
+				error_spacetime: 'Please leave spacetime intact. (Event end has to be after event start)',
+				tutorial: 'Tutorial',
+				confirm_loading: 'This setting uses your session cookie to do an async request across Moses to get your tutorials.\n\n'
+				                 + 'If you don\'t know what this means, everything is fine, but tech people might like to choose.'
 			};
 	}
 }

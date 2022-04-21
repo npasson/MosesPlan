@@ -283,24 +283,7 @@ function showDeletePopup() {
 		for ( let i = 0; i < events.length; i++ ) {
 			let event = events[i];
 
-			let weekday;
-			switch ( event.weekday ) {
-				case 0:
-					weekday = window.mp_strings.monday_short;
-					break;
-				case 1:
-					weekday = window.mp_strings.tuesday_short;
-					break;
-				case 2:
-					weekday = window.mp_strings.wednesday_short;
-					break;
-				case 3:
-					weekday = window.mp_strings.thursday_short;
-					break;
-				case 4:
-					weekday = window.mp_strings.friday_short;
-					break;
-			}
+			let weekday = getWeekdayString( event.weekday );
 
 			$dropdown.append( new Option( `[${weekday} ${event.start}-${event.end}] ${event.name}`, `${i}` ) );
 		}

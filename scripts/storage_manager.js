@@ -13,50 +13,67 @@ class Event {
 }
 
 /**
- * Loads events from local storage. Defined later based on browser.
  * @type function
- * @returns {{mosesplan_events: Array[Event]}} An array with the 'mosesplan_events' key
- *                                             set (or undefined) to the event list.
+ * @returns Promise
  */
-let loadEvents;
+let loadValue;
 
 /**
- * Saves the given events to local storage. Defined later based on browser.
  * @type function
- * @param _events {Array[Event]} The events to save. This overrides, it does not add.
+ * @returns Promise
  */
-let saveEvents;
+let saveValue;
 
 if ( typeof browser !== 'undefined' ) {
 	// FIREFOX
 
-	loadEvents = function () {
-		return browser.storage.local.get( 'mosesplan_events' );
+	loadValue = function ( key ) {
+		return browser.storage.local.get( key );
 	};
 
-	saveEvents = function ( _events ) {
+	saveValue = function ( key, value ) {
 		return browser.storage.local.set( {
-			'mosesplan_events': _events
+			[key]: value
 		} );
 	};
 } else {
 	// CHROMIUM
 
-	loadEvents = function () {
+	loadValue = function ( key ) {
 		return new Promise( resolve => {
-			chrome.storage.local.get( [ 'mosesplan_events' ], function ( result ) {
+			chrome.storage.local.get( [ key ], function ( result ) {
 				resolve( result );
 			} );
 		} );
 	};
 
-	saveEvents = function ( _events ) {
+	saveValue = function ( key, value ) {
 		return new Promise( resolve => {
 			chrome.storage.local.set( {
-				'mosesplan_events': _events
+				[key]: value
 			}, resolve );
 		} );
 	};
+}
+
+/**
+ * Loads events from local storage. Defined later based on browser.
+ * @type function
+ * @returns {Promise[{mosesplan_events: Array[Event]}]} An array with the 'mosesplan_events' key
+ *                                             set (or undefined) to the event list.
+ */
+function loadEvents() {
+	return loadValue( 'mosesplan_events' );
+}
+
+/**
+ * Saves the given events to local storage. Defined later based on browser.
+ * @type function
+ * @param _events {Array[Event]} The events to save. This overrides, it does not add.
+ * @returns {Promise}
+ */
+function saveEvents( _events ) {
+	return saveValue( 'mosesplan_events', _events );
 }
 
 /**
