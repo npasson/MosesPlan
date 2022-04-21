@@ -13,13 +13,22 @@ class Event {
 }
 
 /**
+ * Loads a value from local storage.
+ * Defined differently on Chrome and Firefox.
+ *
  * @type function
+ * @param {string} key The key to retrieve.
  * @returns Promise
  */
 let loadValue;
 
 /**
+ * Saves a value to local storage.
+ * Defined differently on Chrome and Firefox.
+ *
  * @type function
+ * @param {string} key The key to save.
+ * @param {*} value The value to save.
  * @returns Promise
  */
 let saveValue;
@@ -69,11 +78,11 @@ function loadEvents() {
 /**
  * Saves the given events to local storage. Defined later based on browser.
  * @type function
- * @param _events {Array[Event]} The events to save. This overrides, it does not add.
+ * @param events {Array[Event]} The events to save. This overrides, it does not add.
  * @returns {Promise}
  */
-function saveEvents( _events ) {
-	return saveValue( 'mosesplan_events', _events );
+function saveEvents( events ) {
+	return saveValue( 'mosesplan_events', events );
 }
 
 /**

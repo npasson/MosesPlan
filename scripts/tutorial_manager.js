@@ -1,3 +1,9 @@
+/**
+ * Returns a promise containing the entire tutorials page.
+ *
+ * @param cookie The JSESSIONID cookie to use for the request.
+ * @return {JQuery.jqXHR}
+ */
 function getTutorialPageRaw( cookie ) {
 	return $.ajax( {
 		url: 'https://moseskonto.tu-berlin.de/moses/tutorium/stundenplan.html',
@@ -5,6 +11,12 @@ function getTutorialPageRaw( cookie ) {
 	} );
 }
 
+/**
+ * Parses the tutorial page and returns a list of found events.
+ *
+ * @param data The return value of the tutorial page scrape.
+ * @return {Promise} A promise containing the tutorials as events.
+ */
 function parseTutorialAnswer( data ) {
 	let $answer   = $( data );
 	let $calendar = $answer.find( '.moses-calendar-days' );

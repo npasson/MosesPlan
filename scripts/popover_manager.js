@@ -1,3 +1,10 @@
+/**
+ * Gets the popover for the events.
+ *
+ * @param {Event} event The event to get the popover for.
+ * @param {string} type The type to list in the popover.
+ * @return {*} A jQuery object with the popover.
+ */
 function getPopover( event, type = 'Custom' ) {
 	return $( `
 	<div class="mosesplan__popover popover termin-popover hidden-xs top in">

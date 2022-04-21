@@ -2,9 +2,12 @@
 
 Extension for Firefox and Chromium browsers
 
-*Deutsche Version weiter unten.*
+* [Get the Firefox extension](https://addons.mozilla.org/en-US/firefox/addon/mosesplan/)
+* [Get the Chrome add-on](https://chrome.google.com/webstore/detail/mosesplan/kbfefilfmbljdpaookgedimngjbafkmo)
 
 ## English version
+
+*Sprichst du kein Englisch? Scroll weiter runter.*
 
 **Allows adding custom events to "Moses", a class- and exam-management website used by the Technical University Berlin.
 Fully supports both English and German based on the Moses language setting.**

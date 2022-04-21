@@ -1,8 +1,15 @@
 const RENDER_PIXELS_PER_HOUR = 40;
 const RENDER_HOUR_OFFSET     = 8;
 
+/**
+ * Gets the name of a weekday.
+ *
+ * @param index The index of the weekday, from 0 to 4.
+ * @param long Whether to return the long version of the name.
+ * @return {string} The weekday name.
+ */
 function getWeekdayString( index, long = false ) {
-	let weekday;
+	let weekday = 'WRONG_WEEKDAY_INDEX_' + index;
 	switch ( index ) {
 		case 0:
 			weekday = long ? window.mp_strings.monday : window.mp_strings.monday_short;
@@ -61,6 +68,13 @@ function getBlock( event, type = 'custom' ) {
 	return $event[0];
 }
 
+/**
+ * Shows the info popover for events.
+ *
+ * @param e The MouseOverEvent.
+ * @param event {Event} The event object to show.
+ * @param type {string} The type of event, for the popover.
+ */
 function handleEventMouseover( e, event, type = 'Custom' ) {
 	let $target  = $( e.currentTarget );
 	let $popover = $( getPopover( event, type ) );
@@ -77,10 +91,18 @@ function handleEventMouseover( e, event, type = 'Custom' ) {
 	$popover.css( 'left', popover_left );
 }
 
+/**
+ * Deletes the popover on mouse out.
+ */
 function handleEventMouseout() {
 	$( '.mosesplan__popover ' ).remove();
 }
 
+/**
+ * Renders the tutorials (given in the event prarameter)
+ *
+ * @param {Array[Event]} events The events to render.
+ */
 function renderTutorials( events ) {
 	let $days_wrapper = $( '.moses-calendar-days' );
 	let days          = [];
@@ -123,30 +145,30 @@ function render( events ) {
 
 	loadValue( Settings.RENDER_EVENTS ).then( value => {
 		value = value[Settings.RENDER_EVENTS];
-		if ( !value
-		     || !events
-		     || ( typeof events === 'object' && Object.getOwnPropertyNames( events ).length === 0 )
-		     || ( events instanceof Array && events.length === 0 )
+		if ( value
+		     && events
+		     && ( ( typeof events === 'object' && Object.getOwnPropertyNames( events ).length !== 0 )
+		          || ( events instanceof Array && events.length !== 0 ) )
 		) {
-			cleanEvents( days );
-			return;
+			// render custom events if everything is okay
+
+			if ( typeof events === 'object' ) {
+				events = events['mosesplan_events'];
+			}
+
+			for ( const event of events ) {
+				let weekday = event.weekday;
+
+				let $event = $( getBlock( event ) );
+
+				$event.find( '.moses-calendar-event' ).on( 'mouseover', ( e ) => handleEventMouseover( e, event ) );
+				$event.find( '.moses-calendar-event' ).on( 'mouseout', handleEventMouseout );
+
+				days[weekday].append( $event );
+			}
 		}
 
-		if ( typeof events === 'object' ) {
-			events = events['mosesplan_events'];
-		}
-
-		for ( const event of events ) {
-			let weekday = event.weekday;
-
-			let $event = $( getBlock( event ) );
-
-			$event.find( '.moses-calendar-event' ).on( 'mouseover', ( e ) => handleEventMouseover( e, event ) );
-			$event.find( '.moses-calendar-event' ).on( 'mouseout', handleEventMouseout );
-
-			days[weekday].append( $event );
-		}
-
+		// whether or not we rendered the events, we clean the calendar once
 		cleanEvents( days );
 
 		loadValue( Settings.RENDER_TUTORIALS ).then( value => {
@@ -161,6 +183,9 @@ function render( events ) {
 				return;
 			}
 
+			// this is the only time the session cookie is read, and it's only passed
+			// to getTutorialPageRaw() to get the tutorial page (to show tutorials).
+			// Usage of the session cookie can be prevented by not using the Tutorials option.
 			getTutorialPageRaw( getCookie( 'JSESSIONID' ) )
 				.then( parseTutorialAnswer )
 				.then( renderTutorials );

@@ -11,7 +11,7 @@ function getLangObject( language ) {
 				addButtonTitle: '➕ Neues Event',
 				deleteButtonTitle: '➖ Event löschen',
 				toggleButtonTitle: 'Eigene Events anzeigen',
-				tutorialButtonTitle: '+ Tutorien',
+				tutorialButtonTitle: 'Tutorien anzeigen',
 				addEventTitle: 'Neues Event',
 				deleteEventTitle: 'Event löschen',
 				addEventSubmitButton: 'Hinzufügen',
@@ -40,9 +40,8 @@ function getLangObject( language ) {
 				error_no_weekday: 'Bitte wähle einen Wochentag.',
 				error_spacetime: 'Bitte lass die Raumzeit intakt. (Eventende muss nach Eventbeginn sein)',
 				tutorial: 'Tutorium',
-				confirm_loading: 'Diese Option verwendet deinen Session-Cookie, um die Tutorien von Moses abzufragen.\n\n'
-				                 + 'Wenn du nicht weißt, was das heißt, brauchst du dir keine Sorgen zu machen,'
-				                 + ' aber Technik-interessierte Menschen wollen vielleicht wählen.'
+				confirm_loading: 'Beim Klicken des "Tutorien"-Buttons wird dein Browser eine Anfrage an Moses senden, um'
+				                 + ' deine Tutorien in den Kalender zu laden.<br />Deine Daten verlassen Moses nicht.'
 			};
 		case 'en':
 		default:
@@ -50,7 +49,7 @@ function getLangObject( language ) {
 				addButtonTitle: '➕ Add new event',
 				deleteButtonTitle: '➖ Delete event',
 				toggleButtonTitle: 'Show custom events',
-				tutorialButtonTitle: '+ Tutorials',
+				tutorialButtonTitle: 'Show Tutorials',
 				addEventTitle: 'New event',
 				deleteEventTitle: 'Delete event',
 				addEventSubmitButton: 'Add Event',
@@ -79,8 +78,8 @@ function getLangObject( language ) {
 				error_no_weekday: 'Please choose a day of the week.',
 				error_spacetime: 'Please leave spacetime intact. (Event end has to be after event start)',
 				tutorial: 'Tutorial',
-				confirm_loading: 'This setting uses your session cookie to do an async request across Moses to get your tutorials.\n\n'
-				                 + 'If you don\'t know what this means, everything is fine, but tech people might like to choose.'
+				confirm_loading: 'By clicking the "Tutorials" button, your browser will send a request across Moses to'
+				                 + ' show your tutorials in the calendar.<br />None of your data ever leaves Moses.'
 			};
 	}
 }

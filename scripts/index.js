@@ -65,7 +65,9 @@ function toggleButton_onClick( e ) {
 }
 
 /**
- * Handles the click of the Toggle Events button. Toggles visibility of custom added events.
+ * Handles the click of the Toggle Tutorials button. Toggles loading of tutorials.
+ * Shows warning on first click to make sure user is okay with XHR.
+ *
  * @param e The button event.
  */
 function tutorialButton_onClick( e ) {
@@ -74,10 +76,7 @@ function tutorialButton_onClick( e ) {
 
 	loadValue( Settings.RENDER_TUTORIALS ).then( value => {
 		if ( typeof value[Settings.RENDER_TUTORIALS] === 'undefined' ) {
-			let rc = confirm( window.mp_strings.confirm_loading );
-			if ( !rc ) {
-				return;
-			}
+			$( '.mosesplan__render-events-hint' ).remove();
 		}
 
 		if ( $this.hasClass( 'active' ) ) {
@@ -133,6 +132,7 @@ function createButtonArray( $mosesplan ) {
 
 /**
  * Runs the main event loop. Binds all buttons and renders events.
+ * @param {boolean} safe If true, skips checks for wrong page, assuming caller did.
  */
 function setup( safe = false ) {
 	let $calendar = $( '.moses-calendar' );
@@ -153,6 +153,7 @@ function setup( safe = false ) {
 
 	// we're safe here
 
+	// add a version number to the footer
 	$( '#mosesplan-version-hint' ).remove();
 	$( $( '#footer > .pull-right' )[0] ).before( $( `
 		<div id="mosesplan-version-hint" 
@@ -167,15 +168,17 @@ function setup( safe = false ) {
 		$prevOptions.remove();
 	}
 
+	// load language and load i18n strings
 	let lang          = $( '.language-button .text-primary' ).text();
 	window.mp_strings = getLangObject( lang );
-	let $mosesplan    = $( document.createElement( 'div' ) );
 
+	// add mosesplan object
+	let $mosesplan = $( document.createElement( 'div' ) );
 	$mosesplan.addClass( 'mosesplan' );
 	$mosesplan.attr( 'id', 'mosesplan' );
-	// let $outer_form = $( '.container-fluid' );
 	$calendar.after( $mosesplan );
 
+	// add buttons
 	let buttons = createButtonArray( $mosesplan );
 
 	let $addButton      = buttons[0];
@@ -183,23 +186,38 @@ function setup( safe = false ) {
 	let $toggleButton   = buttons[2];
 	let $tutorialButton = buttons[3];
 
+	// add button event listeners
 	$addButton[0].addEventListener( 'click', addButton_onClick );
 	$deleteButton[0].addEventListener( 'click', deleteButton_onClick );
 	$toggleButton[0].addEventListener( 'click', toggleButton_onClick );
 	$tutorialButton[0].addEventListener( 'click', tutorialButton_onClick );
 
+	// if RENDER_EVENTS is set, show button as pressed
 	loadValue( Settings.RENDER_EVENTS ).then( value => {
 		if ( value[Settings.RENDER_EVENTS] ) {
 			$toggleButton.addClass( 'active' );
 		}
 	} );
 
+	// if RENDER_TUTORIALS is set, show button as pressed
+	// if RENDER_TUTORIALS is undefined, show short privacy hint
 	loadValue( Settings.RENDER_TUTORIALS ).then( value => {
+		if ( typeof value[Settings.RENDER_TUTORIALS] === 'undefined' ) {
+			$mosesplan.append( `
+				<div class="mosesplan__render-events-hint"
+				     style="opacity: 70%; font-size: 0.8em; margin-top: 5px; margin-bottom: 5px">
+					${window.mp_strings.confirm_loading}
+				</div>
+			` );
+			return;
+		}
+
 		if ( value[Settings.RENDER_TUTORIALS] ) {
 			$tutorialButton.addClass( 'active' );
 		}
 	} );
 
+	// render stuff
 	loadEvents().then( render );
 }
 
