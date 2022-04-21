@@ -12,14 +12,24 @@ function uuidv4() {
  * An Event class to serialize event data.
  */
 class Event {
-	constructor( uuid, name, location, host, weekday, start_hour, end_hour ) {
-		this.uuid     = uuid;
-		this.name     = name;
-		this.location = location;
-		this.host     = host;
-		this.weekday  = weekday;
-		this.start    = start_hour;
-		this.end      = end_hour;
+	/**
+	 * @param data Event data.
+	 * @param {string|null} data.uuid The event UUID. See uuidv4().
+	 * @param {string} data.name The event name.
+	 * @param {string} data.location The event location.
+	 * @param {string} data.host The event host.
+	 * @param {number} data.weekday The event weekday index (0 to 4).
+	 * @param {number} data.start_hour The event start hour.
+	 * @param {number} data.end_hour The event end hour.
+	 */
+	constructor( data ) {
+		this.uuid     = data.uuid;
+		this.name     = data.name;
+		this.location = data.location;
+		this.host     = data.host;
+		this.weekday  = data.weekday;
+		this.start    = data.start_hour;
+		this.end      = data.end_hour;
 	}
 }
 
@@ -119,11 +129,19 @@ function saveEvents( events ) {
 /**
  * Creates an event based on the Event constructor.
  * Then saves, loads and re-renders the custom events.
- * @param args
+ * @param data The event data.
  * @see Event
+ * @param data Event data.
+ * @param {string|null} data.uuid The event UUID. See uuidv4().
+ * @param {string} data.name The event name.
+ * @param {string} data.location The event location.
+ * @param {string} data.host The event host.
+ * @param {number} data.weekday The event weekday index (0 to 4).
+ * @param {number} data.start_hour The event start hour.
+ * @param {number} data.end_hour The event end hour.
  */
-function createEvent( ...args ) {
-	let event = new Event( ...args );
+function createEvent( data ) {
+	let event = new Event( data );
 
 	loadEvents().then( events => {
 		if ( typeof events === 'undefined' ) {

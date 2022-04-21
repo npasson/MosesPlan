@@ -94,10 +94,15 @@ function handleAddEvent( event ) {
 		return;
 	}
 
-	let uuid = uuidv4();
-	console.log( uuid );
-
-	createEvent( uuid, name, location, host, weekday, start, end );
+	createEvent( {
+		uuid: uuidv4(),
+		name: name,
+		location: location,
+		host: host,
+		weekday: weekday,
+		start_hour: start,
+		end_hour: end
+	} );
 }
 
 /**

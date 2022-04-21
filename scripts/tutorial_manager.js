@@ -54,7 +54,15 @@ function parseTutorialAnswer( data ) {
 
 			let host = 'TU Berlin';
 
-			let event = new Event( null, name, location, host, i, start, end );
+			let event = new Event( {
+				uuid: null,
+				name: name,
+				location: location,
+				host: host,
+				weekday: i,
+				start_hour: start,
+				end_hour: end
+			} );
 			events.push( event );
 		} );
 
