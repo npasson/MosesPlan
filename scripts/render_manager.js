@@ -168,6 +168,9 @@ function render( events ) {
 		// whether or not we rendered the events, we clean the calendar once
 		cleanEvents( days );
 
+		// FIXME: HOTFIX FOR TUTORIALS NOW SHOWING
+		return;
+
 		loadValue( Settings.RENDER_TUTORIALS ).then( value => {
 			if ( !value ) {
 				return;
