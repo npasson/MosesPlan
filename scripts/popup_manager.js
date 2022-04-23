@@ -31,6 +31,20 @@ function applyPopupStyles( $popup ) {
 		$( this ).removeClass( 'mosesplan_input_class_placeholder' );
 	} );
 
+	$popup.find( '.mosesplan__pseudo-button' ).css( {
+		'outline': 'none',
+		'margin-right': '4px',
+		'opacity': '0.5'
+	} );
+
+	$popup.find( '.mosesplan__pseudo-button' ).each( function () {
+		if ( !$( this ).hasClass( 'btn-emph' ) ) {
+			$( this ).addClass( 'btn-default' );
+		}
+		$( this ).addClass( 'btn' );
+
+	} );
+
 	$popup.find( 'button' ).each( function () {
 		if ( !$( this ).hasClass( 'btn-emph' ) ) {
 			$( this ).addClass( 'btn-default' );
@@ -42,6 +56,43 @@ function applyPopupStyles( $popup ) {
 	$popup.find( 'select' ).addClass( 'form-control' );
 
 	return $popup;
+}
+
+function handleColorSelection( e ) {
+	e.preventDefault();
+
+	let $weekdays = $( '.weekdays' ).find( 'button' );
+	$weekdays.each( function () {
+		$( this ).removeClass( 'active' );
+	} );
+
+	$( this ).addClass( 'active' );
+
+	$( '#weekday' ).attr( 'value', $( this ).attr( 'value' ) );
+}
+
+function getDefaultColorButtonsObject() {
+	let defaults = [
+		'#ff0000',
+		'#00ff00',
+		'#0000ff'
+	];
+
+	let ret = $( '<div class="form-group btn-group mosesplan__colors" style="display: block"></div>' );
+
+	for ( const color of defaults ) {
+		let $button = $( `<a 
+			class="mosesplan__pseudo-button mosesplan__color-button"
+			data-value="${color}" 
+			style="background-color:${color};"
+			>&nbsp;&nbsp;&nbsp;</a>` );
+
+		$button.on( 'click', handleColorSelection );
+
+		ret.append( $button );
+	}
+
+	return ret;
 }
 
 /**
@@ -154,7 +205,7 @@ function showAddPopup() {
 		</div>
 		
 		<div class="row">
-		<div class="col-sm-4 mosesplan__weekday-element">
+		<div class="col-sm-6 mosesplan__weekday-element">
         <div class="form-group">
             <label>${window.mp_strings.weekday}</label>
             <div class="form-group btn-group weekdays" style="display: block">
@@ -167,13 +218,21 @@ function showAddPopup() {
             <input type="hidden" name="weekday" id="weekday" required>
         </div>
         </div>
-		<div class="col-sm-4 mosesplan__time-element">
+        <div class="col-sm-6 mosesplan__color__wrapper">
+        <div class="form-group mosesplan__color__form">
+            <label>${window.mp_strings.weekday}</label>
+            <input type="hidden" name="mosesplan-color" id="mosesplan-color" required>
+        </div>
+        </div>
+        </div>
+        <div class="row">
+		<div class="col-sm-6 mosesplan__time-element">
 			<div class="form-group">
                 <label>${window.mp_strings.start_time}</label>
                 <select name="start" id="start"></select>
 			</div>
 		</div>
-		<div class="col-sm-4 mosesplan__time-element">
+		<div class="col-sm-6 mosesplan__time-element">
 			<div class="form-group">
                 <label>${window.mp_strings.end_time}</label>
                 <select name="end" id="end"></select>
@@ -210,6 +269,9 @@ function showAddPopup() {
 	// add weekdays
 	let $weekdays = $popup.find( '.weekdays' ).find( 'button' );
 	$weekdays.on( 'click', handleWeekdaySelection );
+
+	// add colors
+	$popup.find( '.mosesplan__color__form' ).append( getDefaultColorButtonsObject() );
 
 	// add time selectors
 	for ( let i = 8; i <= 18; ++i ) {
