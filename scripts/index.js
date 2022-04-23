@@ -189,6 +189,9 @@ function setup( safe = false ) {
 	let tutorial_page    = 'moses/tutorium/stundenplan.html';
 	let is_tutorial_page = location.pathname.substring( 1 ) === tutorial_page;
 
+	// FIXME: HOTFIX FOR TUTORIALS NOW SHOWING
+	is_tutorial_page = true;
+
 	// add buttons
 	let buttons = createButtonArray( $mosesplan, is_tutorial_page );
 
