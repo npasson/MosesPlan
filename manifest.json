@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "MosesPlan",
-  "version": "0.4",
+  "version": "0.4.1",
   "description": "Add custom events to the TU Berlin 'Moses' timetable.",
   "content_scripts": [
     {
