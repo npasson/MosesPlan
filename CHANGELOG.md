@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.4.1 (2022-04-29)
+
+* Fixed critical runtime bug in Chrome browsers
+
 ## v0.4 (2022-04-29)
 
 * Settings are now in a settings menu
