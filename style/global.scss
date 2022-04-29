@@ -1,0 +1,94 @@
+.mosesplan {
+	button {
+		outline: none;
+	}
+
+	input[type=checkbox][disabled] + label {
+		opacity: 0.5;
+	}
+
+	&__ {
+		&version-hint {
+			display: inline-block;
+			padding: 0 20px;
+			float: left;
+			line-height: 20px;
+			color: #888888;
+		}
+
+		&home-buttons {
+			margin-top: 10px;
+		}
+
+		&popup {
+			border-radius: 4px;
+			border: 1px solid #DDDDDD;
+			background-color: #FFFFFF;
+			max-width: 800px;
+			margin-top: 10px;
+			padding: 14px 12px;
+
+			h2 {
+				margin-top: 0;
+			}
+		}
+
+		&popup-form {
+			user-select: none;
+
+			label {
+				margin-left: 3px;
+			}
+		}
+
+		&pseudo-button {
+			outline: none;
+			margin-right: 4px;
+		}
+
+		&color-button {
+			opacity: 0.2;
+
+			&:hover {
+				opacity: 0.75;
+			}
+
+			&.active {
+				opacity: 1;
+			}
+		}
+
+		&weekdays {
+			// this is the weekday button row, which has to be displayed
+			// as a block to not get pushed to the right of the caption
+			display: block;
+		}
+
+		&render-events-hint {
+			color: red !important;
+		}
+
+		&checkbox-deeper-level {
+			list-style: none;
+
+			label {
+				font-weight: normal;
+			}
+		}
+
+		&settings-checkbox + &settings-followup {
+			opacity: 0.5;
+		}
+
+		&settings-checkbox:checked + &settings-followup {
+			opacity: 1;
+		}
+
+		&render-events-hint {
+			opacity: 70%;
+			font-size: 0.8em;
+			margin-top: 5px;
+			margin-bottom: 5px;
+		}
+	}
+}

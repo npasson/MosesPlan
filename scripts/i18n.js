@@ -5,15 +5,18 @@
  * @returns {Object[string:string]} An object mapping keys to the language representations.
  */
 function getLangObject( language ) {
+	let lang_obj_raw;
+
 	switch ( language.toLowerCase() ) {
 		case 'de':
-			return {
+			lang_obj_raw = {
 				addButtonTitle: '➕ Neues Event',
 				deleteButtonTitle: '➖ Event löschen',
 				toggleButtonTitle: 'Eigene Events anzeigen',
 				tutorialButtonTitle: 'Tutorien anzeigen',
 				addEventTitle: 'Neues Event',
 				deleteEventTitle: 'Event löschen',
+				settingsTitle: 'Einstellungen',
 				addEventSubmitButton: 'Hinzufügen',
 				deleteEventSubmitButton: 'Löschen',
 				weekday: 'Wochentag',
@@ -37,21 +40,26 @@ function getLangObject( language ) {
 				event_time: 'Eventzeit',
 				start_time: 'Beginn',
 				end_time: 'Ende',
+				color: 'Farbe',
 				error_no_weekday: 'Bitte wähle einen Wochentag.',
 				error_spacetime: 'Bitte lass die Raumzeit intakt. (Eventende muss nach Eventbeginn sein)',
 				tutorial: 'Tutorium',
 				confirm_loading: 'Beim Klicken des "Tutorien"-Buttons wird dein Browser eine Anfrage an Moses senden, um'
-				                 + ' deine Tutorien in den Kalender zu laden.<br />Deine Daten verlassen Moses nicht.'
+				                 + ' deine Tutorien in den Kalender zu laden.<br />Deine Daten verlassen Moses nicht.',
+				showCustomEventsCheckbox: 'Eigene Events anzeigen',
+				showTutorialsCheckbox: 'Tutorien laden und anzeigen'
 			};
+			break;
 		case 'en':
 		default:
-			return {
+			lang_obj_raw = {
 				addButtonTitle: '➕ Add new event',
 				deleteButtonTitle: '➖ Delete event',
 				toggleButtonTitle: 'Show custom events',
 				tutorialButtonTitle: 'Show Tutorials',
 				addEventTitle: 'New event',
 				deleteEventTitle: 'Delete event',
+				settingsTitle: 'Settings',
 				addEventSubmitButton: 'Add Event',
 				deleteEventSubmitButton: 'Delete',
 				weekday: 'Day of Week',
@@ -74,12 +82,24 @@ function getLangObject( language ) {
 				event_host_placeholder: 'e.g. John Doe',
 				event_time: 'Event time',
 				start_time: 'Start',
-				end_time: 'End',
+				color: 'Color',
 				error_no_weekday: 'Please choose a day of the week.',
 				error_spacetime: 'Please leave spacetime intact. (Event end has to be after event start)',
 				tutorial: 'Tutorial',
 				confirm_loading: 'By clicking the "Tutorials" button, your browser will send a request across Moses to'
-				                 + ' show your tutorials in the calendar.<br />None of your data ever leaves Moses.'
+				                 + ' show your tutorials in the calendar.<br />None of your data ever leaves Moses.',
+				showCustomEventsCheckbox: 'Show custom events',
+				showTutorialsCheckbox: 'Load tutorials'
 			};
 	}
+
+	const handler = {
+		get( obj, prop ) {
+			return prop in obj ?
+			       obj[prop] :
+			       prop;
+		}
+	};
+
+	return new Proxy( lang_obj_raw, handler );
 }

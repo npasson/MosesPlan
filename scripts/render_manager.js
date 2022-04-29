@@ -2,6 +2,29 @@ const RENDER_PIXELS_PER_HOUR = 40;
 const RENDER_HOUR_OFFSET     = 8;
 
 /**
+ * ECMA2016 / ES6
+ * taken from: https://gist.github.com/danieliser/b4b24c9f772066bcf0a6
+ */
+function convertHexToRGBA( hexCode, opacity = 1 ) {
+	let hex = hexCode.replace( '#', '' );
+
+	if ( hex.length === 3 ) {
+		hex = `${hex[0]}${hex[0]}${hex[1]}${hex[1]}${hex[2]}${hex[2]}`;
+	}
+
+	const r = parseInt( hex.substring( 0, 2 ), 16 );
+	const g = parseInt( hex.substring( 2, 4 ), 16 );
+	const b = parseInt( hex.substring( 4, 6 ), 16 );
+
+	/* Backward compatibility for whole number based opacity values. */
+	if ( opacity > 1 && opacity <= 100 ) {
+		opacity = opacity / 100;
+	}
+
+	return `rgba(${r},${g},${b},${opacity})`;
+}
+
+/**
  * Gets the name of a weekday.
  *
  * @param index The index of the weekday, from 0 to 4.
@@ -43,7 +66,9 @@ function getBlock( event, type = 'custom' ) {
 
 	let $event = $( `
 		<div class="moses-calendar-event-wrapper mosesplan__event mosesplan__event--${type}" 
-		     style="width: 100%; height: ${height}px; top: ${top_offset}px; left: 0.000000%;">
+		     style="width: 100%; height: ${height}px; top: ${top_offset}px; left: 0.000000%;"
+		     data-uuid="${event.uuid}"
+		     >
 			<div class="moses-calendar-event ellipsis">
 				<span class="ellipsis">${event.name}</span>
 				<br><small class="ellipsis">${event.location}</small>
@@ -59,8 +84,8 @@ function getBlock( event, type = 'custom' ) {
 		default:
 			$event.find( '.moses-calendar-event' ).css( {
 				'color': '#111111',
-				'border-color': '#656565',
-				'background-color': 'rgba(150, 150, 150, 0.4)'
+				'border-color': `${event.color}`,
+				'background-color': `${convertHexToRGBA( event.color, 0.3 )}`
 			} );
 			break;
 	}
@@ -96,6 +121,16 @@ function handleEventMouseover( e, event, type = 'Custom' ) {
  */
 function handleEventMouseout() {
 	$( '.mosesplan__popover ' ).remove();
+}
+
+function filterBlacklist( events ) {
+	return new Promise( resolve => {
+		loadValue( Settings.TUTORIAL_BLACKLIST ).then( blacklist => {
+			resolve( events.filter( ( event ) => {
+				return !blacklist.includes( event.name );
+			} ) );
+		} );
+	} );
 }
 
 /**
@@ -144,25 +179,19 @@ function render( events ) {
 	} );
 
 	loadValue( Settings.RENDER_EVENTS ).then( value => {
-		value = value[Settings.RENDER_EVENTS];
-		if ( value
-		     && events
-		     && ( ( typeof events === 'object' && Object.getOwnPropertyNames( events ).length !== 0 )
-		          || ( events instanceof Array && events.length !== 0 ) )
-		) {
+		if ( value && events ) {
 			// render custom events if everything is okay
-
-			if ( typeof events === 'object' ) {
-				events = events['mosesplan_events'];
-			}
-
 			for ( const event of events ) {
 				let weekday = event.weekday;
+				let $event  = $( getBlock( event ) );
 
-				let $event = $( getBlock( event ) );
+				$event.find( '.moses-calendar-event' )
+				      .on( 'mouseover', ( e ) =>
+					      handleEventMouseover( e, event ) );
 
-				$event.find( '.moses-calendar-event' ).on( 'mouseover', ( e ) => handleEventMouseover( e, event ) );
-				$event.find( '.moses-calendar-event' ).on( 'mouseout', handleEventMouseout );
+				$event.find( '.moses-calendar-event' )
+				      .on( 'mouseout',
+					      handleEventMouseout );
 
 				days[weekday].append( $event );
 			}
@@ -171,11 +200,7 @@ function render( events ) {
 		// whether or not we rendered the events, we clean the calendar once
 		cleanEvents( days );
 
-		// FIXME: HOTFIX FOR TUTORIALS NOW SHOWING
-		return;
-
 		loadValue( Settings.RENDER_TUTORIALS ).then( value => {
-			value = value[Settings.RENDER_TUTORIALS];
 			if ( !value ) {
 				return;
 			}
@@ -191,6 +216,7 @@ function render( events ) {
 			// Usage of the session cookie can be prevented by not using the Tutorials option.
 			getTutorialPageRaw( getCookie( 'JSESSIONID' ) )
 				.then( parseTutorialAnswer )
+				.then( filterBlacklist )
 				.then( renderTutorials );
 		} ).catch( ( e ) => console.log( e ) );
 	} );

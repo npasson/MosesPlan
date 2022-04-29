@@ -1,8 +1,9 @@
-const VERSION = '0.3';
+const VERSION = '0.4';
 
 const Settings = {
 	RENDER_EVENTS: 'mosesplan_render-events',
-	RENDER_TUTORIALS: 'mosesplan_render-tutorials'
+	RENDER_TUTORIALS: 'mosesplan_render-tutorials',
+	TUTORIAL_BLACKLIST: 'mosesplan_tutorial-blacklist'
 };
 
 function getCookie( cname ) {
@@ -40,86 +41,28 @@ function deleteButton_onClick( e ) {
 }
 
 /**
- * Handles the click of the Toggle Events button. Toggles visibility of custom added events.
+ * Handles the click of the Settings button. Shows the Settings popup.
  * @param e The button event.
  */
-function toggleButton_onClick( e ) {
+function settingsButton_onClick( e ) {
 	e.preventDefault();
-	let $this = $( this );
-
-	if ( $this.hasClass( 'active' ) ) {
-		$this.removeClass( 'active' );
-		$( '.mosesplan__event' ).each( function () {
-			$( this ).remove();
-		} );
-
-		saveValue( Settings.RENDER_EVENTS, false )
-			.then( loadEvents )
-			.then( render ).catch( ( e ) => console.log( e ) );
-	} else {
-		$this.addClass( 'active' );
-		saveValue( Settings.RENDER_EVENTS, true )
-			.then( loadEvents )
-			.then( render ).catch( ( e ) => console.log( e ) );
-	}
+	showSettingsPopup();
 }
-
-/**
- * Handles the click of the Toggle Tutorials button. Toggles loading of tutorials.
- * Shows warning on first click to make sure user is okay with XHR.
- *
- * @param e The button event.
- */
-function tutorialButton_onClick( e ) {
-	e.preventDefault();
-	let $this = $( this );
-
-	loadValue( Settings.RENDER_TUTORIALS ).then( value => {
-		if ( typeof value[Settings.RENDER_TUTORIALS] === 'undefined' ) {
-			$( '.mosesplan__render-events-hint' ).remove();
-		}
-
-		if ( $this.hasClass( 'active' ) ) {
-			$this.removeClass( 'active' );
-			$( '.mosesplan__event--tutorial' ).each( function () {
-				$( this ).remove();
-			} );
-
-			saveValue( Settings.RENDER_TUTORIALS, false )
-				.then( loadEvents )
-				.then( render ).catch( ( e ) => console.log( e ) );
-		} else {
-			$this.addClass( 'active' );
-			saveValue( Settings.RENDER_TUTORIALS, true )
-				.then( loadEvents )
-				.then( render ).catch( ( e ) => console.log( e ) );
-		}
-	} );
-
-}
-
 /**
  * Creates the array of buttons shown to the user below the calendar.
  * @param $mosesplan The jQuery object to insert the button group into.
- * @param {boolean} is_tutorial_page Whether the current page is the tutorial page.
  * @returns {*[]} Returns the button array for further event binding.
  */
-function createButtonArray( $mosesplan, is_tutorial_page ) {
+function createButtonArray( $mosesplan ) {
 	let buttons = [];
 
 	let $buttonGroup = $( document.createElement( 'div' ) );
-	$buttonGroup.addClass( 'btn-group' );
-	$buttonGroup.css( 'margin-top', '10px' );
+	$buttonGroup.addClass( 'btn-group mosesplan__home-buttons' );
 
-	let strings = is_tutorial_page ? [
+	let strings = [
 		window.mp_strings.addButtonTitle,
 		window.mp_strings.deleteButtonTitle,
-		window.mp_strings.toggleButtonTitle
-	] : [
-		window.mp_strings.addButtonTitle,
-		window.mp_strings.deleteButtonTitle,
-		window.mp_strings.toggleButtonTitle,
-		window.mp_strings.tutorialButtonTitle
+		window.mp_strings.settingsTitle
 	];
 
 	for ( const text of strings ) {
@@ -128,7 +71,6 @@ function createButtonArray( $mosesplan, is_tutorial_page ) {
 		$button.addClass( 'btn btn-default' );
 		$button.text( text );
 		$button.appendTo( $buttonGroup );
-		$button.css( 'outline', 'none' );
 
 		buttons.push( $button );
 	}
@@ -164,13 +106,13 @@ function setup( safe = false ) {
 	// add a version number to the footer
 	$( '#mosesplan-version-hint' ).remove();
 	$( $( '#footer > .pull-right' )[0] ).before( $( `
-		<div id="mosesplan-version-hint" 
-		     style="display: inline-block; padding: 0 20px; float:left; line-height:20px; color:#888;">
+		<div class="mosesplan__version-hint" >
             <small>MosesPlan</small><br><span class="fa fa-space fa-calendar"></span>
             v${VERSION}
         </div>
 	` ) );
 
+	// remove previous instance, in case plugin is reloaded
 	let $prevOptions = $( '#mosesplan' );
 	if ( $prevOptions.length !== 0 ) {
 		$prevOptions.remove();
@@ -186,14 +128,17 @@ function setup( safe = false ) {
 	$mosesplan.attr( 'id', 'mosesplan' );
 	$calendar.after( $mosesplan );
 
-	let tutorial_page    = 'moses/tutorium/stundenplan.html';
-	let is_tutorial_page = location.pathname.substring( 1 ) === tutorial_page;
-
-	// FIXME: HOTFIX FOR TUTORIALS NOW SHOWING
-	is_tutorial_page = true;
+	// add style to the object
+	getGlobalStyles().then( ( response ) => {
+		response.text().then( text => {
+			$mosesplan.append( $( `
+				<style>${text}</style>
+			` ) );
+		} );
+	} );
 
 	// add buttons
-	let buttons = createButtonArray( $mosesplan, is_tutorial_page );
+	let buttons = createButtonArray( $mosesplan );
 
 	let $addButton    = buttons[0];
 	let $deleteButton = buttons[1];
@@ -202,39 +147,7 @@ function setup( safe = false ) {
 	// add button event listeners
 	$addButton[0].addEventListener( 'click', addButton_onClick );
 	$deleteButton[0].addEventListener( 'click', deleteButton_onClick );
-	$toggleButton[0].addEventListener( 'click', toggleButton_onClick );
-
-	// if RENDER_EVENTS is set, show button as pressed
-	loadValue( Settings.RENDER_EVENTS ).then( value => {
-		if ( value[Settings.RENDER_EVENTS] ) {
-			$toggleButton.addClass( 'active' );
-		}
-	} );
-
-	// only render tutorials outside of tutorial page
-	if ( !is_tutorial_page ) {
-
-		let $tutorialButton = buttons[3];
-		$tutorialButton[0].addEventListener( 'click', tutorialButton_onClick );
-
-		// if RENDER_TUTORIALS is set, show button as pressed
-		// if RENDER_TUTORIALS is undefined, show short privacy hint
-		loadValue( Settings.RENDER_TUTORIALS ).then( value => {
-			if ( typeof value[Settings.RENDER_TUTORIALS] === 'undefined' ) {
-				$mosesplan.append( `
-				<div class="mosesplan__render-events-hint"
-				     style="opacity: 70%; font-size: 0.8em; margin-top: 5px; margin-bottom: 5px">
-					${window.mp_strings.confirm_loading}
-				</div>
-			` );
-				return;
-			}
-
-			if ( value[Settings.RENDER_TUTORIALS] ) {
-				$tutorialButton.addClass( 'active' );
-			}
-		} );
-	}
+	$toggleButton[0].addEventListener( 'click', settingsButton_onClick );
 
 	// render stuff
 	loadEvents().then( render );

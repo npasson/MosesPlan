@@ -1,14 +1,37 @@
 /**
+ * Generates a UUIDv4 using the Crypto API. (No, this will not mine Bitcoin to generate a UUID.)
+ * @return {string} A UUIDv4
+ */
+function uuidv4() {
+	return ( [ 1e7 ] + -1e3 + -4e3 + -8e3 + -1e11 ).replace( /[018]/g, c =>
+		( c ^ crypto.getRandomValues( new Uint8Array( 1 ) )[0] & 15 >> c / 4 ).toString( 16 )
+	);
+}
+
+/**
  * An Event class to serialize event data.
  */
 class Event {
-	constructor( name, location, host, weekday, start_hour, end_hour ) {
-		this.name     = name;
-		this.location = location;
-		this.host     = host;
-		this.weekday  = weekday;
-		this.start    = start_hour;
-		this.end      = end_hour;
+	/**
+	 * @param data Event data.
+	 * @param {string|null} data.uuid The event UUID. See uuidv4().
+	 * @param {string} data.name The event name.
+	 * @param {string} data.location The event location.
+	 * @param {string} data.host The event host.
+	 * @param {number} data.weekday The event weekday index (0 to 4).
+	 * @param {number} data.start_hour The event start hour.
+	 * @param {number} data.end_hour The event end hour.
+	 * @param {string?} data.color The event color, as a hex code.
+	 */
+	constructor( data ) {
+		this.uuid     = data.uuid;
+		this.name     = data.name;
+		this.location = data.location;
+		this.host     = data.host;
+		this.weekday  = data.weekday;
+		this.start    = data.start_hour;
+		this.end      = data.end_hour;
+		this.color    = data.color;
 	}
 }
 
@@ -37,7 +60,11 @@ if ( typeof browser !== 'undefined' ) {
 	// FIREFOX
 
 	loadValue = function ( key ) {
-		return browser.storage.local.get( key );
+		return new Promise( resolve => {
+			browser.storage.local.get( key ).then( ( data ) => {
+				resolve( data[key] );
+			} );
+		} );
 	};
 
 	saveValue = function ( key, value ) {
@@ -51,7 +78,7 @@ if ( typeof browser !== 'undefined' ) {
 	loadValue = function ( key ) {
 		return new Promise( resolve => {
 			chrome.storage.local.get( [ key ], function ( result ) {
-				resolve( result );
+				resolve( result[key] );
 			} );
 		} );
 	};
@@ -72,7 +99,27 @@ if ( typeof browser !== 'undefined' ) {
  *                                             set (or undefined) to the event list.
  */
 function loadEvents() {
-	return loadValue( 'mosesplan_events' );
+	// this has backwards compatibility in case some events don't have a UUID yet
+	return new Promise( resolve => {
+		loadValue( 'mosesplan_events' ).then( events => {
+			if ( typeof events === 'undefined' ) {
+				resolve( events );
+				return;
+			}
+
+			for ( const event of events ) {
+				if ( !( 'uuid' in event ) ) {
+					event['uuid'] = uuidv4();
+				}
+
+				if ( !( 'color' in event ) ) {
+					event['color'] = '#666666';
+				}
+			}
+
+			resolve( events );
+		} );
+	} );
 }
 
 /**
@@ -88,35 +135,66 @@ function saveEvents( events ) {
 /**
  * Creates an event based on the Event constructor.
  * Then saves, loads and re-renders the custom events.
- * @param args
+ * @param data The event data.
  * @see Event
+ * @param data Event data.
+ * @param {string|null} data.uuid The event UUID. See uuidv4().
+ * @param {string} data.name The event name.
+ * @param {string} data.location The event location.
+ * @param {string} data.host The event host.
+ * @param {number} data.weekday The event weekday index (0 to 4).
+ * @param {number} data.start_hour The event start hour.
+ * @param {number} data.end_hour The event end hour.
  */
-function createEvent( ...args ) {
-	let event = new Event( ...args );
+function createEvent( data ) {
+	let event = new Event( data );
 
 	loadEvents().then( events => {
-		// this section does a bunch of stuff because
-		// sometimes local storage returns an empty object
-		// and not, as expected, an object with a key
-		// that's just empty. There's probably a better way,
-		// but this works and since createEvent() is not
-		// called in a time-sensitive context, it can be
-		// more expensive than needed.
-
-		if ( !events || ( typeof events === 'object' && Object.getOwnPropertyNames( events ).length === 0 ) ) {
-			events = [];
-		}
-
-		if ( typeof events === 'object' ) {
-			events = events['mosesplan_events'];
-		}
-
 		if ( typeof events === 'undefined' ) {
 			events = [];
 		}
 
 		events.push( event );
 
-		saveEvents( events ).then( loadEvents ).then( render );
+		saveEvents( events ).then( loadEvents ).then( render ).catch( e => console.log( e ) );
 	} );
+}
+
+function addToTutorialBlacklist( tutorial_name ) {
+	loadValue( Settings.TUTORIAL_BLACKLIST ).then(
+		blacklist => {
+			if ( typeof blacklist === 'undefined' ) {
+				blacklist = [];
+			}
+
+			if ( !( blacklist.includes( tutorial_name ) ) ) {
+				blacklist.push( tutorial_name );
+			}
+
+			saveValue( Settings.TUTORIAL_BLACKLIST, blacklist )
+				.then( loadEvents )
+				.then( render );
+		}
+	);
+}
+
+function removeFromTutorialBlacklist( tutorial_name ) {
+	loadValue( Settings.TUTORIAL_BLACKLIST ).then(
+		blacklist => {
+			if ( typeof blacklist === 'undefined' ) {
+				blacklist = [];
+			}
+
+			for ( let i = 0; i < blacklist.length; i++ ) {
+				if ( blacklist[i] === tutorial_name ) {
+					blacklist.splice( i, 1 );
+					break;
+				}
+			}
+
+			saveValue( Settings.TUTORIAL_BLACKLIST, blacklist )
+				.then( loadEvents )
+				.then( render );
+		}
+	);
 }
