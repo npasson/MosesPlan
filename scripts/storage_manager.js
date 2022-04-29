@@ -153,3 +153,42 @@ function createEvent( data ) {
 		saveEvents( events ).then( loadEvents ).then( render ).catch( e => console.log( e ) );
 	} );
 }
+
+function addToTutorialBlacklist( tutorial_name ) {
+	loadValue( Settings.TUTORIAL_BLACKLIST ).then(
+		blacklist => {
+			if ( typeof blacklist === 'undefined' ) {
+				blacklist = [];
+			}
+
+			if ( !( blacklist.includes( tutorial_name ) ) ) {
+				blacklist.push( tutorial_name );
+			}
+
+			saveValue( Settings.TUTORIAL_BLACKLIST, blacklist )
+				.then( loadEvents )
+				.then( render );
+		}
+	);
+}
+
+function removeFromTutorialBlacklist( tutorial_name ) {
+	loadValue( Settings.TUTORIAL_BLACKLIST ).then(
+		blacklist => {
+			if ( typeof blacklist === 'undefined' ) {
+				blacklist = [];
+			}
+
+			for ( let i = 0; i < blacklist.length; i++ ) {
+				if ( blacklist[i] === tutorial_name ) {
+					blacklist.splice( i, 1 );
+					break;
+				}
+			}
+
+			saveValue( Settings.TUTORIAL_BLACKLIST, blacklist )
+				.then( loadEvents )
+				.then( render );
+		}
+	);
+}

@@ -1,0 +1,64 @@
+.mosesplan button {
+  outline: none;
+}
+.mosesplan input[type=checkbox][disabled] + label {
+  opacity: 0.5;
+}
+.mosesplan__version-hint {
+  display: inline-block;
+  padding: 0 20px;
+  float: left;
+  line-height: 20px;
+  color: #888888;
+}
+.mosesplan__home-buttons {
+  margin-top: 10px;
+}
+.mosesplan__popup {
+  border-radius: 4px;
+  border: 1px solid #DDDDDD;
+  background-color: #FFFFFF;
+  max-width: 800px;
+  margin-top: 10px;
+  padding: 14px 12px;
+}
+.mosesplan__popup h2 {
+  margin-top: 0;
+}
+.mosesplan__popup-form {
+  user-select: none;
+}
+.mosesplan__popup-form label {
+  margin-left: 3px;
+}
+.mosesplan__pseudo-button {
+  outline: none;
+  margin-right: 4px;
+  opacity: 0.5;
+}
+.mosesplan__weekdays {
+  display: block;
+}
+.mosesplan__render-events-hint {
+  color: red !important;
+}
+.mosesplan__checkbox-deeper-level {
+  list-style: none;
+}
+.mosesplan__checkbox-deeper-level label {
+  font-weight: normal;
+}
+.mosesplan__settings-checkbox + .mosesplan__settings-followup {
+  opacity: 0.5;
+}
+.mosesplan__settings-checkbox:checked + .mosesplan__settings-followup {
+  opacity: 1;
+}
+.mosesplan__render-events-hint {
+  opacity: 70%;
+  font-size: 0.8em;
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+/*# sourceMappingURL=global.css.map */

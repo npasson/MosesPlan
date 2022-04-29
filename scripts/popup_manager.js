@@ -6,15 +6,6 @@
  * @returns {*} A jQuery object containing the styled popup.
  */
 function applyPopupStyles( $popup ) {
-	$popup.css( {
-		'border-radius': '4px',
-		'border': '1px solid #dddddd',
-		'background-color': '#ffffff',
-		'max-width': '800px',
-		'margin-top': '10px',
-		'padding': '14px 12px'
-	} );
-
 	$popup.find( '.mosesplan_input_class_placeholder' ).each( function () {
 		$( this ).find( 'span' ).each( function () {
 			$( this ).addClass( 'ui-autocomplete form-control ui-inputwrapper-filled' );
@@ -31,12 +22,6 @@ function applyPopupStyles( $popup ) {
 		$( this ).removeClass( 'mosesplan_input_class_placeholder' );
 	} );
 
-	$popup.find( '.mosesplan__pseudo-button' ).css( {
-		'outline': 'none',
-		'margin-right': '4px',
-		'opacity': '0.5'
-	} );
-
 	$popup.find( '.mosesplan__pseudo-button' ).each( function () {
 		if ( !$( this ).hasClass( 'btn-emph' ) ) {
 			$( this ).addClass( 'btn-default' );
@@ -50,7 +35,6 @@ function applyPopupStyles( $popup ) {
 			$( this ).addClass( 'btn-default' );
 		}
 		$( this ).addClass( 'btn' );
-		$( this ).css( 'outline', 'none' );
 	} );
 
 	$popup.find( 'select' ).addClass( 'form-control' );
@@ -61,21 +45,24 @@ function applyPopupStyles( $popup ) {
 function handleColorSelection( e ) {
 	e.preventDefault();
 
-	let $weekdays = $( '.weekdays' ).find( 'button' );
+	let $weekdays = $( '.mosesplan__weekdays' ).find( 'button' );
 	$weekdays.each( function () {
 		$( this ).removeClass( 'active' );
 	} );
 
 	$( this ).addClass( 'active' );
 
-	$( '#weekday' ).attr( 'value', $( this ).attr( 'value' ) );
+	$( '#moses-weekday' ).attr( 'value', $( this ).data( 'color' ) );
 }
 
 function getDefaultColorButtonsObject() {
 	let defaults = [
 		'#ff0000',
 		'#00ff00',
-		'#0000ff'
+		'#0000ff',
+		'#00ffff',
+		'#ff00ff',
+		'#ffff00'
 	];
 
 	let ret = $( '<div class="form-group btn-group mosesplan__colors" style="display: block"></div>' );
@@ -83,7 +70,7 @@ function getDefaultColorButtonsObject() {
 	for ( const color of defaults ) {
 		let $button = $( `<a 
 			class="mosesplan__pseudo-button mosesplan__color-button"
-			data-value="${color}" 
+			data-color="${color}" 
 			style="background-color:${color};"
 			>&nbsp;&nbsp;&nbsp;</a>` );
 
@@ -103,9 +90,8 @@ function getDefaultColorButtonsObject() {
  */
 function _createBarebonesPopupWrapper() {
 	let $popup = $( document.createElement( 'div' ) );
-	$popup.addClass( 'mosesplan_popup' );
-
-	$popup.append( `<h2 style="margin-top: 0" class="mosesplan_popup__title"></h2><hr />` );
+	$popup.addClass( 'mosesplan__popup' );
+	$popup.append( `<h2 class="mosesplan__popup__title"></h2><hr />` );
 
 	return $popup;
 }
@@ -115,7 +101,7 @@ function _createBarebonesPopupWrapper() {
  * @param event The FormEvent from the Add Event form.
  */
 function handleAddEvent( event ) {
-	let $form = $( '.mosesplan_popup__form' );
+	let $form = $( '.mosesplan__popup-form' );
 
 	if ( !$form[0].checkValidity() ) {
 		$form[0].reportValidity();
@@ -164,31 +150,31 @@ function handleAddEvent( event ) {
 function handleWeekdaySelection( e ) {
 	e.preventDefault();
 
-	let $weekdays = $( '.weekdays' ).find( 'button' );
+	let $weekdays = $( '.mosesplan__weekdays' ).find( 'button' );
 	$weekdays.each( function () {
 		$( this ).removeClass( 'active' );
 	} );
 
 	$( this ).addClass( 'active' );
 
-	$( '#weekday' ).attr( 'value', $( this ).attr( 'value' ) );
+	$( '#mosesplan-weekday' ).attr( 'value', $( this ).attr( 'value' ) );
 }
 
 /**
  * Shows an Add Event dialogue, removing the old one if needed.
  */
 function showAddPopup() {
-	let $prevPopup = $( '.mosesplan_popup' );
+	let $prevPopup = $( '.mosesplan__popup' );
 	if ( $prevPopup.length !== 0 ) {
 		$prevPopup.remove();
 	}
 
 	let $popup = _createBarebonesPopupWrapper();
 
-	$popup.find( '.mosesplan_popup__title' ).text( window.mp_strings.addEventTitle );
+	$popup.find( '.mosesplan__popup__title' ).text( window.mp_strings.addEventTitle );
 
 	let $popup_form = `
-	<form class="mosesplan_popup__form">
+	<form class="mosesplan__popup-form">
 		<div class="form-group mosesplan_input_class_placeholder">
             <label>${window.mp_strings.event_name}</label>
             <span><input type="text" name="name" placeholder="${window.mp_strings.event_name_placeholder}" required/></span>
@@ -208,20 +194,14 @@ function showAddPopup() {
 		<div class="col-sm-6 mosesplan__weekday-element">
         <div class="form-group">
             <label>${window.mp_strings.weekday}</label>
-            <div class="form-group btn-group weekdays" style="display: block">
+            <div class="form-group btn-group mosesplan__weekdays">
                 <button value="0">${window.mp_strings.monday_short}</button
                 ><button value="1">${window.mp_strings.tuesday_short}</button
                 ><button value="2">${window.mp_strings.wednesday_short}</button
                 ><button value="3">${window.mp_strings.thursday_short}</button
                 ><button value="4">${window.mp_strings.friday_short}</button>
             </div>
-            <input type="hidden" name="weekday" id="weekday" required>
-        </div>
-        </div>
-        <div class="col-sm-6 mosesplan__color__wrapper">
-        <div class="form-group mosesplan__color__form">
-            <label>${window.mp_strings.weekday}</label>
-            <input type="hidden" name="mosesplan-color" id="mosesplan-color" required>
+            <input type="hidden" name="weekday" id="mosesplan-weekday" required>
         </div>
         </div>
         </div>
@@ -264,10 +244,10 @@ function showAddPopup() {
 	$submit.addClass( 'btn-emph' );
 	$submit.attr( 'type', 'submit' );
 	$popup.find( '.action-buttons' ).append( $submit );
-	$popup.find( '.mosesplan_popup__form' ).on( 'submit', handleAddEvent );
+	$popup.find( '.mosesplan__popup-form' ).on( 'submit', handleAddEvent );
 
 	// add weekdays
-	let $weekdays = $popup.find( '.weekdays' ).find( 'button' );
+	let $weekdays = $popup.find( '.mosesplan__weekdays' ).find( 'button' );
 	$weekdays.on( 'click', handleWeekdaySelection );
 
 	// add colors
@@ -318,17 +298,17 @@ function handleDeleteEvent( event ) {
  * Shows a Delete Event dialogue, removing the old one if needed.
  */
 function showDeletePopup() {
-	let $prevPopup = $( '.mosesplan_popup' );
+	let $prevPopup = $( '.mosesplan__popup' );
 	if ( $prevPopup.length !== 0 ) {
 		$prevPopup.remove();
 	}
 
 	let $popup = _createBarebonesPopupWrapper();
 
-	$popup.find( '.mosesplan_popup__title' ).text( window.mp_strings.deleteEventTitle );
+	$popup.find( '.mosesplan__popup__title' ).text( window.mp_strings.deleteEventTitle );
 
 	let $popup_form = `
-	<form class="mosesplan_popup__form">
+	<form class="mosesplan__popup-form">
 		<div class="form-group">
             <label>${window.mp_strings.delete_dropdown}</label>
             <select name="delete" id="delete"></select>
@@ -396,7 +376,142 @@ function showDeletePopup() {
 	$submit.addClass( 'btn-emph' );
 	$submit.attr( 'type', 'submit' );
 	$popup.find( '.action-buttons' ).append( $submit );
-	$popup.find( '.mosesplan_popup__form' ).on( 'submit', handleDeleteEvent );
+	$popup.find( '.mosesplan__popup-form' ).on( 'submit', handleDeleteEvent );
+
+	// apply style and add
+	$popup = applyPopupStyles( $popup );
+	$( '.mosesplan' ).append( $popup );
+}
+
+function showSettingsPopup() {
+	let $prevPopup = $( '.mosesplan__popup' );
+	if ( $prevPopup.length !== 0 ) {
+		$prevPopup.remove();
+	}
+
+	let $popup = _createBarebonesPopupWrapper();
+
+	$popup.find( '.mosesplan__popup__title' ).text( window.mp_strings.settingsTitle );
+
+	let settings = [];
+
+	settings.push( new SettingsEntry( {
+		displayname: window.mp_strings.showCustomEventsCheckbox,
+		type: 'checkbox',
+		id: 'mosesplan-show-custom-events-setting',
+		input_id: 'mosesplan-show-custom-events-setting-checkbox',
+		clickCallback: function () {
+			saveValue( Settings.RENDER_EVENTS, $( this ).prop( 'checked' ) )
+				.then( loadEvents )
+				.then( render );
+		},
+		beforeCallback: function () {
+			loadValue( Settings.RENDER_EVENTS ).then( value => {
+				if ( value ) {
+					$( this ).find( '.mosesplan__settings-input' )
+					         .prop( 'checked', true );
+				}
+			} );
+		}
+	} ) );
+
+	settings.push( new SettingsEntry( {
+		displayname: window.mp_strings.showTutorialsCheckbox,
+		type: 'checkbox',
+		id: 'mosesplan-show-tutorials-setting',
+		input_id: 'mosesplan-show-tutorials-setting-checkbox',
+		clickCallback: function () {
+			let checked = $( this ).prop( 'checked' );
+
+			// disable child checkboxes if not applicable
+			$( this ).parent()
+			         .find( '.mosesplan__checkbox-deeper-level' )
+			         .find( 'input' )
+			         .attr( 'disabled', !checked );
+
+			// save the value to local storage
+			saveValue( Settings.RENDER_TUTORIALS, checked )
+				.then( loadEvents )
+				.then( render );
+		},
+		beforeCallback: function () {
+			// check checkboix if value is true
+			loadValue( Settings.RENDER_TUTORIALS ).then( value => {
+				if ( value ) {
+					$( this ).find( '.mosesplan__settings-input' )
+					         .prop( 'checked', true );
+				}
+			} );
+
+			// render the tutorial list
+			getTutorialPageRaw( getCookie( 'JSESSIONID' ) )
+				.then( parseTutorialAnswer )
+				.then( ( tutorials ) => {
+
+					// load blacklist to pre-fill checkboxes
+					loadValue( Settings.TUTORIAL_BLACKLIST ).then( blacklist => {
+
+						// show blacklist for debug
+						console.log( blacklist );
+
+						// create list of tutorials
+						let $tutorial_list = $( document.createElement( 'ul' ) );
+						$tutorial_list.addClass( 'mosesplan__checkbox-deeper-level' );
+
+						for ( const tutorial of tutorials ) {
+							// create checkbox and label
+							let $li = $( document.createElement( 'li' ) );
+							$li.append(
+								$( `<input type="checkbox" data-name="${tutorial.name}" id="${tutorial.uuid}"/>` )
+							);
+							$li.append( $( `<label for="${tutorial.uuid}">${tutorial.name}</label>` ) );
+
+							// set to checked if tutorial is not in blacklist
+							$li.find( 'input' ).prop(
+								'checked',
+								!( blacklist.includes( tutorial.name ) )
+							);
+
+							// append to list
+							$tutorial_list.append( $li );
+						}
+
+						// add handler for click to either remove or add to blacklist
+						$tutorial_list.find( 'input' ).on( 'click', function () {
+							let checked = $( this ).prop( 'checked' );
+							let name    = $( this ).data( 'name' );
+							if ( checked ) {
+								removeFromTutorialBlacklist( name );
+							} else {
+								addToTutorialBlacklist( name );
+							}
+						} );
+
+						// disable checkboxes if tutorials aren't rendered right now
+						loadValue( Settings.RENDER_TUTORIALS ).then( value => {
+							if ( !value ) {
+								$tutorial_list.find( 'input' ).attr( 'disabled', 'yes' );
+							}
+
+							// and finally, add list
+							$( this ).append( $tutorial_list );
+						} );
+					} );
+				} );
+		}
+	} ) );
+
+	let $popup_form = $( `
+		<form class="mosesplan__popup-form"></form>
+	` );
+
+	// add form
+	$popup.append( $popup_form );
+
+	// add onclicks
+	for ( const setting of settings ) {
+		$popup_form.append( getSettingJQueryObject( setting ) );
+	}
 
 	// apply style and add
 	$popup = applyPopupStyles( $popup );

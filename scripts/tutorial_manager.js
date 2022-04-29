@@ -15,7 +15,7 @@ function getTutorialPageRaw( cookie ) {
  * Parses the tutorial page and returns a list of found events.
  *
  * @param data The return value of the tutorial page scrape.
- * @return {Promise} A promise containing the tutorials as events.
+ * @return {Promise<Array[Event]>} A promise containing the tutorials as events.
  */
 function parseTutorialAnswer( data ) {
 	let $answer   = $( data );
@@ -55,7 +55,7 @@ function parseTutorialAnswer( data ) {
 			let host = 'TU Berlin';
 
 			let event = new Event( {
-				uuid: null,
+				uuid: uuidv4(),
 				name: name,
 				location: location,
 				host: host,

@@ -100,6 +100,16 @@ function handleEventMouseout() {
 	$( '.mosesplan__popover ' ).remove();
 }
 
+function filterBlacklist( events ) {
+	return new Promise( resolve => {
+		loadValue( Settings.TUTORIAL_BLACKLIST ).then( blacklist => {
+			resolve( events.filter( ( event ) => {
+				return !blacklist.includes( event.name );
+			} ) );
+		} );
+	} );
+}
+
 /**
  * Renders the tutorials (given in the event prarameter)
  *
@@ -150,8 +160,7 @@ function render( events ) {
 			// render custom events if everything is okay
 			for ( const event of events ) {
 				let weekday = event.weekday;
-
-				let $event = $( getBlock( event ) );
+				let $event  = $( getBlock( event ) );
 
 				$event.find( '.moses-calendar-event' )
 				      .on( 'mouseover', ( e ) =>
@@ -167,9 +176,6 @@ function render( events ) {
 
 		// whether or not we rendered the events, we clean the calendar once
 		cleanEvents( days );
-
-		// FIXME: HOTFIX FOR TUTORIALS NOW SHOWING
-		return;
 
 		loadValue( Settings.RENDER_TUTORIALS ).then( value => {
 			if ( !value ) {
@@ -187,6 +193,7 @@ function render( events ) {
 			// Usage of the session cookie can be prevented by not using the Tutorials option.
 			getTutorialPageRaw( getCookie( 'JSESSIONID' ) )
 				.then( parseTutorialAnswer )
+				.then( filterBlacklist )
 				.then( renderTutorials );
 		} ).catch( ( e ) => console.log( e ) );
 	} );

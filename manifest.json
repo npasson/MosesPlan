@@ -10,8 +10,10 @@
       ],
       "js": [
         "lib/jquery-3.6.0.js",
+        "scripts/global-styles.js",
         "scripts/i18n.js",
         "scripts/storage_manager.js",
+        "scripts/settings_manager.js",
         "scripts/tutorial_manager.js",
         "scripts/render_helpers.js",
         "scripts/popover_manager.js",
@@ -20,6 +22,9 @@
         "scripts/index.js"
       ]
     }
+  ],
+  "web_accessible_resources": [
+    "style/global.css"
   ],
   "permissions": [
     "storage"
