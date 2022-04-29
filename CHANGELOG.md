@@ -1,5 +1,15 @@
 # Changelog
 
+## v0.4 (2022-04-29)
+
+* Settings are now in a settings menu
+* Added selective tutorial rendering to fix inconsistent schedule (thanks LP!)
+* Added color selection for events
+
+## v0.3.1 (2022-04-23)
+
+* Removed tutorial view to avoid duplicates
+
 ## v0.3 (2022-04-21)
 
 * Tutorials can now be shown in the calendar.
