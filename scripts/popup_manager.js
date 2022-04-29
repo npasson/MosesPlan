@@ -45,24 +45,25 @@ function applyPopupStyles( $popup ) {
 function handleColorSelection( e ) {
 	e.preventDefault();
 
-	let $weekdays = $( '.mosesplan__weekdays' ).find( 'button' );
-	$weekdays.each( function () {
+	$( '.mosesplan__color-button' ).each( function () {
 		$( this ).removeClass( 'active' );
 	} );
 
 	$( this ).addClass( 'active' );
 
-	$( '#moses-weekday' ).attr( 'value', $( this ).data( 'color' ) );
+	$( '#mosesplan-color' ).attr( 'value', $( this ).data( 'color' ) );
 }
 
 function getDefaultColorButtonsObject() {
 	let defaults = [
-		'#ff0000',
-		'#00ff00',
-		'#0000ff',
-		'#00ffff',
-		'#ff00ff',
-		'#ffff00'
+		'#666666',
+		'#EF5350',
+		'#AB47BC',
+		'#5C6BC0',
+		'#26C6DA',
+		'#66BB6A',
+		'#FFCA28',
+		'#8D6E63'
 	];
 
 	let ret = $( '<div class="form-group btn-group mosesplan__colors" style="display: block"></div>' );
@@ -116,6 +117,7 @@ function handleAddEvent( event ) {
 	let name     = data.name.value;
 	let location = data.location.value;
 	let host     = data.host.value;
+	let color    = data.color.value;
 	let weekday  = parseInt( data.weekday.value );
 	let start    = parseInt( data.start.value );
 	let end      = parseInt( data.end.value );
@@ -138,7 +140,8 @@ function handleAddEvent( event ) {
 		host: host,
 		weekday: weekday,
 		start_hour: start,
-		end_hour: end
+		end_hour: end,
+		color: color
 	} );
 }
 
@@ -202,6 +205,12 @@ function showAddPopup() {
                 ><button value="4">${window.mp_strings.friday_short}</button>
             </div>
             <input type="hidden" name="weekday" id="mosesplan-weekday" required>
+        </div>
+        </div>
+        <div class="col-sm-6 mosesplan__color__wrapper">
+        <div class="form-group mosesplan__color__form">
+            <label>${window.mp_strings.color}</label>
+            <input type="hidden" name="color" id="mosesplan-color" required>
         </div>
         </div>
         </div>
@@ -450,9 +459,6 @@ function showSettingsPopup() {
 
 					// load blacklist to pre-fill checkboxes
 					loadValue( Settings.TUTORIAL_BLACKLIST ).then( blacklist => {
-
-						// show blacklist for debug
-						console.log( blacklist );
 
 						// create list of tutorials
 						let $tutorial_list = $( document.createElement( 'ul' ) );

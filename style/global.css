@@ -34,7 +34,15 @@
 .mosesplan__pseudo-button {
   outline: none;
   margin-right: 4px;
-  opacity: 0.5;
+}
+.mosesplan__color-button {
+  opacity: 0.2;
+}
+.mosesplan__color-button:hover {
+  opacity: 0.75;
+}
+.mosesplan__color-button.active {
+  opacity: 1;
 }
 .mosesplan__weekdays {
   display: block;

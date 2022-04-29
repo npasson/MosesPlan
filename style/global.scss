@@ -44,7 +44,18 @@
 		&pseudo-button {
 			outline: none;
 			margin-right: 4px;
-			opacity: 0.5;
+		}
+
+		&color-button {
+			opacity: 0.2;
+
+			&:hover {
+				opacity: 0.75;
+			}
+
+			&.active {
+				opacity: 1;
+			}
 		}
 
 		&weekdays {

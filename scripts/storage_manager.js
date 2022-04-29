@@ -21,6 +21,7 @@ class Event {
 	 * @param {number} data.weekday The event weekday index (0 to 4).
 	 * @param {number} data.start_hour The event start hour.
 	 * @param {number} data.end_hour The event end hour.
+	 * @param {string?} data.color The event color, as a hex code.
 	 */
 	constructor( data ) {
 		this.uuid     = data.uuid;
@@ -30,6 +31,7 @@ class Event {
 		this.weekday  = data.weekday;
 		this.start    = data.start_hour;
 		this.end      = data.end_hour;
+		this.color    = data.color;
 	}
 }
 
@@ -108,6 +110,10 @@ function loadEvents() {
 			for ( const event of events ) {
 				if ( !( 'uuid' in event ) ) {
 					event['uuid'] = uuidv4();
+				}
+
+				if ( !( 'color' in event ) ) {
+					event['color'] = '#666666';
 				}
 			}
 
