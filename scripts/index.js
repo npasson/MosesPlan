@@ -1,4 +1,4 @@
-const VERSION = '0.3';
+const VERSION = '0.4';
 
 const Settings = {
 	RENDER_EVENTS: 'mosesplan_render-events',
