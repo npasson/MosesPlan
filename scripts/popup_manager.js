@@ -458,7 +458,7 @@ function showSettingsPopup() {
 				.then( ( tutorials ) => {
 
 					// load blacklist to pre-fill checkboxes
-					loadValue( Settings.TUTORIAL_BLACKLIST ).then( blacklist => {
+					getBlacklist().then( blacklist => {
 
 						// create list of tutorials
 						let $tutorial_list = $( document.createElement( 'ul' ) );

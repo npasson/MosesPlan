@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.4.2 (2022-04-30)
+
+* Fixed crash when blacklist is unitialized
+
 ## v0.4.1 (2022-04-29)
 
 * Fixed critical runtime bug in Chrome browsers

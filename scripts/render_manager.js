@@ -125,7 +125,7 @@ function handleEventMouseout() {
 
 function filterBlacklist( events ) {
 	return new Promise( resolve => {
-		loadValue( Settings.TUTORIAL_BLACKLIST ).then( blacklist => {
+		getBlacklist().then( blacklist => {
 			resolve( events.filter( ( event ) => {
 				return !blacklist.includes( event.name );
 			} ) );

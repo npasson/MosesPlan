@@ -56,6 +56,15 @@ let loadValue;
  */
 let saveValue;
 
+/**
+ * Deletes the entire local storage for the extension.
+ * Defined differently on Chrome and Firefox.
+ *
+ * @type function
+ * @returns Promise
+ */
+let clearLocalStorage;
+
 if ( typeof browser !== 'undefined' ) {
 	// FIREFOX
 
@@ -71,6 +80,10 @@ if ( typeof browser !== 'undefined' ) {
 		return browser.storage.local.set( {
 			[key]: value
 		} );
+	};
+
+	clearLocalStorage = function () {
+		return browser.storage.local.clear();
 	};
 } else {
 	// CHROMIUM
@@ -89,6 +102,10 @@ if ( typeof browser !== 'undefined' ) {
 				[key]: value
 			}, resolve );
 		} );
+	};
+
+	clearLocalStorage = function () {
+		return chrome.storage.local.clear();
 	};
 }
 
@@ -160,13 +177,21 @@ function createEvent( data ) {
 	} );
 }
 
-function addToTutorialBlacklist( tutorial_name ) {
-	loadValue( Settings.TUTORIAL_BLACKLIST ).then(
-		blacklist => {
-			if ( typeof blacklist === 'undefined' ) {
+function getBlacklist() {
+	return new Promise( resolve => {
+		loadValue( Settings.TUTORIAL_BLACKLIST ).then( blacklist => {
+			if ( !( blacklist instanceof Array ) ) {
 				blacklist = [];
 			}
 
+			resolve( blacklist );
+		} );
+	} );
+}
+
+function addToTutorialBlacklist( tutorial_name ) {
+	getBlacklist().then(
+		blacklist => {
 			if ( !( blacklist.includes( tutorial_name ) ) ) {
 				blacklist.push( tutorial_name );
 			}
@@ -179,12 +204,8 @@ function addToTutorialBlacklist( tutorial_name ) {
 }
 
 function removeFromTutorialBlacklist( tutorial_name ) {
-	loadValue( Settings.TUTORIAL_BLACKLIST ).then(
+	getBlacklist().then(
 		blacklist => {
-			if ( typeof blacklist === 'undefined' ) {
-				blacklist = [];
-			}
-
 			for ( let i = 0; i < blacklist.length; i++ ) {
 				if ( blacklist[i] === tutorial_name ) {
 					blacklist.splice( i, 1 );
