@@ -84,6 +84,7 @@ function getLangObject( language ) {
 				event_host_placeholder: 'e.g. John Doe',
 				event_time: 'Event time',
 				start_time: 'Start',
+				end_time: 'End',
 				color: 'Color',
 				error_no_weekday: 'Please choose a day of the week.',
 				error_spacetime: 'Please leave spacetime intact. (Event end has to be after event start)',
