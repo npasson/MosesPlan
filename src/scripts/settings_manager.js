@@ -11,7 +11,7 @@ class SettingsEntry {
 }
 
 /**
- *
+ * Gets the setting as a JQuery DOM element.
  * @param {SettingsEntry} settings_entry
  */
 function getSettingJQueryObject( settings_entry ) {

@@ -2,29 +2,6 @@ const RENDER_PIXELS_PER_HOUR = 40;
 const RENDER_HOUR_OFFSET     = 8;
 
 /**
- * ECMA2016 / ES6
- * taken from: https://gist.github.com/danieliser/b4b24c9f772066bcf0a6
- */
-function convertHexToRGBA( hexCode, opacity = 1 ) {
-	let hex = hexCode.replace( '#', '' );
-
-	if ( hex.length === 3 ) {
-		hex = `${hex[0]}${hex[0]}${hex[1]}${hex[1]}${hex[2]}${hex[2]}`;
-	}
-
-	const r = parseInt( hex.substring( 0, 2 ), 16 );
-	const g = parseInt( hex.substring( 2, 4 ), 16 );
-	const b = parseInt( hex.substring( 4, 6 ), 16 );
-
-	/* Backward compatibility for whole number based opacity values. */
-	if ( opacity > 1 && opacity <= 100 ) {
-		opacity = opacity / 100;
-	}
-
-	return `rgba(${r},${g},${b},${opacity})`;
-}
-
-/**
  * Gets the name of a weekday.
  *
  * @param index The index of the weekday, from 0 to 4.
@@ -68,11 +45,13 @@ function getBlock( event, type = 'custom' ) {
 		<div class="moses-calendar-event-wrapper mosesplan__event mosesplan__event--${type}" 
 		     style="width: 100%; height: ${height}px; top: ${top_offset}px; left: 0.000000%;"
 		     data-uuid="${event.uuid}"
+		     id="mosesplan-event-${event.uuid}"
 		     >
 			<div class="moses-calendar-event ellipsis">
 				<span class="ellipsis">${event.name}</span>
 				<br><small class="ellipsis">${event.location}</small>
 				<br><small class="ellipsis">${event.host}</small>
+				<div class="bot-right mosesplan__event-buttons"></div>
             </div>
         </div>
 	` );
@@ -87,6 +66,32 @@ function getBlock( event, type = 'custom' ) {
 				'border-color': `${event.color}`,
 				'background-color': `${convertHexToRGBA( event.color, 0.3 )}`
 			} );
+
+			let $button_array = $event.find( '.mosesplan__event-buttons' );
+
+			$button_array.append( $( `
+					<span data-uuid="${event.uuid}" 
+					      class="mosesplan__event-button mosesplan__event-button--edit fa fa-fw fa-pencil"/>`
+			) );
+
+			$button_array.children().last().on( 'click', function () {
+				let uuid = $( this ).data( 'uuid' );
+				showEditPopup( uuid );
+			} );
+
+			$button_array.append( $( `
+					<span data-uuid="${event.uuid}" 
+					      class="mosesplan__event-button mosesplan__event-button--delete fa fa-fw fam-cal-remove"/>`
+			) );
+
+			$button_array.children().last().on( 'click', function () {
+				let uuid = $( this ).data( 'uuid' );
+				deleteEvent( uuid ).then( () => {
+					$( '.mosesplan__popover' ).remove();
+					$( '.mosesplan__popup--edit' ).remove();
+				} );
+			} );
+
 			break;
 	}
 
@@ -178,7 +183,7 @@ function render( events ) {
 		days.push( $( $( this ).find( '.moses-calendar-day-body-inner' )[0] ) );
 	} );
 
-	loadValue( Settings.RENDER_EVENTS ).then( value => {
+	loadValue( StorageKey.RENDER_EVENTS ).then( value => {
 		if ( value && events ) {
 			// render custom events if everything is okay
 			for ( const event of events ) {
@@ -200,7 +205,7 @@ function render( events ) {
 		// whether or not we rendered the events, we clean the calendar once
 		cleanEvents( days );
 
-		loadValue( Settings.RENDER_TUTORIALS ).then( value => {
+		loadValue( StorageKey.RENDER_TUTORIALS ).then( value => {
 			if ( !value ) {
 				return;
 			}
@@ -211,9 +216,7 @@ function render( events ) {
 				return;
 			}
 
-			// this is the only time the session cookie is read, and it's only passed
-			// to getTutorialPageRaw() to get the tutorial page (to show tutorials).
-			// Usage of the session cookie can be prevented by not using the Tutorials option.
+			// Session cookie is only passed to getTutorialPageRaw() to get the tutorial page (to show tutorials).
 			getTutorialPageRaw( getCookie( 'JSESSIONID' ) )
 				.then( parseTutorialAnswer )
 				.then( filterBlacklist )

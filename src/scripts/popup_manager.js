@@ -1,3 +1,10 @@
+function closeAllPopups() {
+	let $prevPopup = $( '.mosesplan__popup' );
+	if ( $prevPopup.length !== 0 ) {
+		$prevPopup.remove();
+	}
+}
+
 /**
  * Styles a popup according to default Moses stylesheets.
  * This makes the dialogue look native.
@@ -42,16 +49,18 @@ function applyPopupStyles( $popup ) {
 	return $popup;
 }
 
-function handleColorSelection( e ) {
-	e.preventDefault();
+/**
+ * Creates a popup that can be used for any purpose. Used to avoid code duplication.
+ *
+ * @returns {*} A jQuery object containing an empty popup.
+ * @private
+ */
+function getBarebonesPopupWrapper() {
+	let $popup = $( document.createElement( 'div' ) );
+	$popup.addClass( 'mosesplan__popup' );
+	$popup.append( `<h2 class="mosesplan__popup__title"></h2><hr />` );
 
-	$( '.mosesplan__color-button' ).each( function () {
-		$( this ).removeClass( 'active' );
-	} );
-
-	$( this ).addClass( 'active' );
-
-	$( '#mosesplan-color' ).attr( 'value', $( this ).data( 'color' ) );
+	return $popup;
 }
 
 function getDefaultColorButtonsObject() {
@@ -84,35 +93,27 @@ function getDefaultColorButtonsObject() {
 }
 
 /**
- * Creates a popup that can be used for any purpose. Used to avoid code duplication.
+ * Gets the relevant data from the submitted form. If edit dialogue, includes UUID.
  *
- * @returns {*} A jQuery object containing an empty popup.
- * @private
+ * @param form_event The form event of the submitted form.
+ * @returns {
+ *      {color: *, name: *, host: *, weekday: number, start: number, location: *, end: number}
+ *      | boolean
+ *      | {color: *,name: *, host: *, weekday: number, start: number, location: *, end: number, uuid: null}
+ * }
  */
-function _createBarebonesPopupWrapper() {
-	let $popup = $( document.createElement( 'div' ) );
-	$popup.addClass( 'mosesplan__popup' );
-	$popup.append( `<h2 class="mosesplan__popup__title"></h2><hr />` );
-
-	return $popup;
-}
-
-/**
- * Handles the submission of the Add Event form.
- * @param event The FormEvent from the Add Event form.
- */
-function handleAddEvent( event ) {
+function getEventDataFromFormEvent( form_event ) {
 	let $form = $( '.mosesplan__popup-form' );
 
 	if ( !$form[0].checkValidity() ) {
 		$form[0].reportValidity();
-		event.preventDefault();
-		return;
+		form_event.preventDefault();
+		return false;
 	}
 
-	let data = event.target.elements;
+	let data = form_event.target.elements;
 
-	event.preventDefault();
+	form_event.preventDefault();
 
 	let name     = data.name.value;
 	let location = data.location.value;
@@ -122,27 +123,46 @@ function handleAddEvent( event ) {
 	let start    = parseInt( data.start.value );
 	let end      = parseInt( data.end.value );
 
+	let uuid = null;
+	try {
+		uuid = data.edit_uuid.value;
+	} catch ( e ) {
+		// ignore
+	}
+
 	if ( weekday !== weekday ) {
 		// lmao wtf js
 		alert( window.mp_strings.error_no_weekday );
-		return;
+		return false;
 	}
 
 	if ( start >= end ) {
 		alert( window.mp_strings.error_spacetime );
-		return;
+		return false;
 	}
 
-	createEvent( {
-		uuid: uuidv4(),
+	if ( uuid !== null ) {
+		return {
+			uuid: uuid,
+			name: name,
+			location: location,
+			host: host,
+			weekday: weekday,
+			start: start,
+			end: end,
+			color: color
+		};
+	}
+
+	return {
 		name: name,
 		location: location,
 		host: host,
 		weekday: weekday,
-		start_hour: start,
-		end_hour: end,
+		start: start,
+		end: end,
 		color: color
-	} );
+	};
 }
 
 /**
@@ -163,16 +183,94 @@ function handleWeekdaySelection( e ) {
 	$( '#mosesplan-weekday' ).attr( 'value', $( this ).attr( 'value' ) );
 }
 
+function handleColorSelection( e ) {
+	e.preventDefault();
+
+	$( '.mosesplan__color-button' ).each( function () {
+		$( this ).removeClass( 'active' );
+	} );
+
+	$( this ).addClass( 'active' );
+
+	$( '#mosesplan-color' ).attr( 'value', $( this ).data( 'color' ) );
+}
+
+/**
+ * Handles the submission of the Add Event form.
+ * @param event The FormEvent from the Add Event form.
+ */
+function handleAddEvent( event ) {
+	let event_data = getEventDataFromFormEvent( event );
+	if ( !event_data ) {
+		return;
+	}
+
+	createEvent( {
+		uuid: uuidv4(),
+		name: event_data.name,
+		location: event_data.location,
+		host: event_data.host,
+		weekday: event_data.weekday,
+		start_hour: event_data.start,
+		end_hour: event_data.end,
+		color: event_data.color
+	} );
+}
+
+/**
+ * Handles the submission of the Delete Event form.
+ * @param event The FormEvent from the Delete Event form.
+ */
+function handleDeleteEvent( event ) {
+	let data = event.target.elements;
+	event.preventDefault();
+
+	let uuid = data.delete.value;
+	deleteEvent( uuid ).then( showDeletePopup );
+}
+
+/**
+ * Handles the edit form submit and refreshes the render.
+ * @param form_event
+ */
+function handleEditEvent( form_event ) {
+	let event_data = getEventDataFromFormEvent( form_event );
+	if ( !event_data ) {
+		return;
+	}
+
+	loadEvents().then( events => {
+
+		for ( let i = 0; i < events.length; i++ ) {
+			let event = events[i];
+
+			if ( event.uuid === event_data.uuid ) {
+				events[i] = {
+					...event,
+					...event_data
+				};
+
+				saveEvents( events ).then( loadEvents )
+				                    .then( render )
+				                    .then( closeAllPopups );
+				return;
+			}
+		}
+		for ( let event_element of events ) {
+
+		}
+
+		alert( 'Error -4: Edit failed. Please notify the developer about this. Event UUID: ' + uuid );
+	} );
+}
+
 /**
  * Shows an Add Event dialogue, removing the old one if needed.
  */
 function showAddPopup() {
-	let $prevPopup = $( '.mosesplan__popup' );
-	if ( $prevPopup.length !== 0 ) {
-		$prevPopup.remove();
-	}
+	closeAllPopups();
 
-	let $popup = _createBarebonesPopupWrapper();
+	let $popup = getBarebonesPopupWrapper();
 
 	$popup.find( '.mosesplan__popup__title' ).text( window.mp_strings.addEventTitle );
 
@@ -279,41 +377,12 @@ function showAddPopup() {
 }
 
 /**
- * Handles the submission of the Delete Event form.
- * @param event The FormEvent from the Delete Event form.
- */
-function handleDeleteEvent( event ) {
-	let data = event.target.elements;
-
-	event.preventDefault();
-
-	let uuid = data.delete.value;
-
-	loadEvents().then(
-		events => {
-			for ( let i = 0; i < events.length; i++ ) {
-				if ( events[i].uuid === uuid ) {
-					events.splice( i, 1 );
-					break;
-				}
-			}
-
-			saveEvents( events ).then( loadEvents ).then( render ).then( showDeletePopup );
-		}
-	);
-}
-
-/**
  * Shows a Delete Event dialogue, removing the old one if needed.
  */
 function showDeletePopup() {
-	let $prevPopup = $( '.mosesplan__popup' );
-	if ( $prevPopup.length !== 0 ) {
-		$prevPopup.remove();
-	}
+	closeAllPopups();
 
-	let $popup = _createBarebonesPopupWrapper();
-
+	let $popup = getBarebonesPopupWrapper();
 	$popup.find( '.mosesplan__popup__title' ).text( window.mp_strings.deleteEventTitle );
 
 	let $popup_form = `
@@ -392,13 +461,14 @@ function showDeletePopup() {
 	$( '.mosesplan' ).append( $popup );
 }
 
+/**
+ * Shows the Settings popup. Uses SettingsEntry objects to handle state.
+ * @see SettingsEntry
+ */
 function showSettingsPopup() {
-	let $prevPopup = $( '.mosesplan__popup' );
-	if ( $prevPopup.length !== 0 ) {
-		$prevPopup.remove();
-	}
+	closeAllPopups();
 
-	let $popup = _createBarebonesPopupWrapper();
+	let $popup = getBarebonesPopupWrapper();
 
 	$popup.find( '.mosesplan__popup__title' ).text( window.mp_strings.settingsTitle );
 
@@ -410,12 +480,12 @@ function showSettingsPopup() {
 		id: 'mosesplan-show-custom-events-setting',
 		input_id: 'mosesplan-show-custom-events-setting-checkbox',
 		clickCallback: function () {
-			saveValue( Settings.RENDER_EVENTS, $( this ).prop( 'checked' ) )
+			saveValue( StorageKey.RENDER_EVENTS, $( this ).prop( 'checked' ) )
 				.then( loadEvents )
 				.then( render );
 		},
 		beforeCallback: function () {
-			loadValue( Settings.RENDER_EVENTS ).then( value => {
+			loadValue( StorageKey.RENDER_EVENTS ).then( value => {
 				if ( value ) {
 					$( this ).find( '.mosesplan__settings-input' )
 					         .prop( 'checked', true );
@@ -439,13 +509,13 @@ function showSettingsPopup() {
 			         .attr( 'disabled', !checked );
 
 			// save the value to local storage
-			saveValue( Settings.RENDER_TUTORIALS, checked )
+			saveValue( StorageKey.RENDER_TUTORIALS, checked )
 				.then( loadEvents )
 				.then( render );
 		},
 		beforeCallback: function () {
 			// check checkboix if value is true
-			loadValue( Settings.RENDER_TUTORIALS ).then( value => {
+			loadValue( StorageKey.RENDER_TUTORIALS ).then( value => {
 				if ( value ) {
 					$( this ).find( '.mosesplan__settings-input' )
 					         .prop( 'checked', true );
@@ -494,7 +564,7 @@ function showSettingsPopup() {
 						} );
 
 						// disable checkboxes if tutorials aren't rendered right now
-						loadValue( Settings.RENDER_TUTORIALS ).then( value => {
+						loadValue( StorageKey.RENDER_TUTORIALS ).then( value => {
 							if ( !value ) {
 								$tutorial_list.find( 'input' ).attr( 'disabled', 'yes' );
 							}
@@ -522,4 +592,88 @@ function showSettingsPopup() {
 	// apply style and add
 	$popup = applyPopupStyles( $popup );
 	$( '.mosesplan' ).append( $popup );
+}
+
+/**
+ * Shows the Edit dialogue. Uses a modified Add dialogue.
+ * @param uuid The UUID of the event to edit.
+ */
+function showEditPopup( uuid ) {
+	closeAllPopups();
+
+	// for this function, we're just modifying an add dialogue and pre-filling it
+	showAddPopup();
+
+	$( '.mosesplan__popup__title' ).text( window.mp_strings.editEventTitle );
+	let $form  = $( '.mosesplan__popup-form' );
+	let $popup = $( '.mosesplan__popup' );
+	$popup.addClass( 'mosesplan__popup--edit' );
+
+	loadEvents().then( ( events ) => {
+		/**
+		 * @type Event
+		 */
+		let event;
+		for ( const event_element of events ) {
+			if ( event_element.uuid === uuid ) {
+				event = event_element;
+				break;
+			}
+		}
+
+		if ( typeof event === 'undefined' ) {
+			alert( 'Error -4: Could not find event. Please notify the developer about this. Event UUID: ' + uuid );
+			closeAllPopups();
+			return;
+		}
+
+		// mark edit event (and remove mark from others)
+		$( '.mosesplan__event' ).removeClass( 'mosesplan__currently-editing' );
+		$( `#mosesplan-event-${event.uuid}` ).addClass( 'mosesplan__currently-editing' );
+
+		// basic text attributes
+		$form.find( '[name=name]' )
+		     .val( event.name );
+		$form.find( '[name=location]' )
+		     .val( event.location );
+		$form.find( '[name=host]' )
+		     .val( event.host );
+
+		// weekday
+		$form.find( `.mosesplan__weekdays button[value=${event.weekday}]` )
+		     .addClass( 'active' );
+		$form.find( `#mosesplan-weekday` )
+		     .val( event.weekday );
+
+		// color
+		$form.find( `.mosesplan__colors a[data-color="${event.color}"]` )
+		     .addClass( 'active' );
+		$form.find( `#mosesplan-color` )
+		     .attr( 'value', event.color );
+
+		// start time
+		$form.find( `#start option[value=${event.start}]` )
+		     .attr( 'selected', 'selected' );
+		$form.find( `#end option[value=${event.end}]` )
+		     .attr( 'selected', 'selected' );
+
+		// edit submit button
+		let $submit = $form.find( 'button[type=submit]' );
+		$submit.text( window.mp_strings.saveChanges );
+
+		$form.append( `<input type="hidden" name="edit_uuid" value="${event.uuid}">` );
+
+		$form.off( 'submit' );
+		$form.on( 'submit', handleEditEvent );
+
+		$form.find( '.action-buttons' )
+		     .append( `<button id="mosesplan-cancel-edit" class="btn">${window.mp_strings.cancel}</button>` );
+
+		$form.find( '#mosesplan-cancel-edit' )
+		     .on( 'click', ( e ) => {
+			     e.preventDefault();
+			     loadEvents().then( render ).then( closeAllPopups );
+		     } );
+	} );
+
 }

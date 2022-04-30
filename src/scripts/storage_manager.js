@@ -118,7 +118,7 @@ if ( typeof browser !== 'undefined' ) {
 function loadEvents() {
 	// this has backwards compatibility in case some events don't have a UUID yet
 	return new Promise( resolve => {
-		loadValue( 'mosesplan_events' ).then( events => {
+		loadValue( StorageKey.EVENTS ).then( events => {
 			if ( typeof events === 'undefined' ) {
 				resolve( events );
 				return;
@@ -146,7 +146,7 @@ function loadEvents() {
  * @returns {Promise}
  */
 function saveEvents( events ) {
-	return saveValue( 'mosesplan_events', events );
+	return saveValue( StorageKey.EVENTS, events );
 }
 
 /**
@@ -177,9 +177,35 @@ function createEvent( data ) {
 	} );
 }
 
+/**
+ * Deletes an event from storage.
+ * @param uuid The event UUID to delete.
+ * @returns {Promise<>} Resolves once plan is refreshed.
+ */
+function deleteEvent( uuid ) {
+	return new Promise( resolve => {
+		loadEvents().then(
+			events => {
+				for ( let i = 0; i < events.length; i++ ) {
+					if ( events[i].uuid === uuid ) {
+						events.splice( i, 1 );
+						break;
+					}
+				}
+
+				saveEvents( events ).then( loadEvents ).then( render ).then( resolve );
+			}
+		);
+	} );
+}
+
+/**
+ * Returns the blacklist. Contract: return value is guaranteed to be defined and an array.
+ * @returns {Promise<Array>} An array of the blacklist titles.
+ */
 function getBlacklist() {
 	return new Promise( resolve => {
-		loadValue( Settings.TUTORIAL_BLACKLIST ).then( blacklist => {
+		loadValue( StorageKey.TUTORIAL_BLACKLIST ).then( blacklist => {
 			if ( !( blacklist instanceof Array ) ) {
 				blacklist = [];
 			}
@@ -189,6 +215,10 @@ function getBlacklist() {
 	} );
 }
 
+/**
+ * Adds a tutorial name to the blacklist.
+ * @param tutorial_name The tutorial to add to the blacklist.
+ */
 function addToTutorialBlacklist( tutorial_name ) {
 	getBlacklist().then(
 		blacklist => {
@@ -196,13 +226,17 @@ function addToTutorialBlacklist( tutorial_name ) {
 				blacklist.push( tutorial_name );
 			}
 
-			saveValue( Settings.TUTORIAL_BLACKLIST, blacklist )
+			saveValue( StorageKey.TUTORIAL_BLACKLIST, blacklist )
 				.then( loadEvents )
 				.then( render );
 		}
 	);
 }
 
+/**
+ * Removes a tutorial name ferom the blacklist.
+ * @param tutorial_name The tutorial to remove from the blacklist.
+ */
 function removeFromTutorialBlacklist( tutorial_name ) {
 	getBlacklist().then(
 		blacklist => {
@@ -213,7 +247,7 @@ function removeFromTutorialBlacklist( tutorial_name ) {
 				}
 			}
 
-			saveValue( Settings.TUTORIAL_BLACKLIST, blacklist )
+			saveValue( StorageKey.TUTORIAL_BLACKLIST, blacklist )
 				.then( loadEvents )
 				.then( render );
 		}

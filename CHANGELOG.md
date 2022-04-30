@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.5 (2022-04-30)
+
+* Events can now be edited
+* Added buttons to edit and delete events to event blocks
+* Fixed missing and outdated i18n strings
+* Misc fixes, improvements and refactoring
+
 ## v0.4.2 (2022-04-30)
 
 * Fixed crash when blacklist is unitialized

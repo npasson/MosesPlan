@@ -4,13 +4,6 @@
 .mosesplan input[type=checkbox][disabled] + label {
   opacity: 0.5;
 }
-.mosesplan__version-hint {
-  display: inline-block;
-  padding: 0 20px;
-  float: left;
-  line-height: 20px;
-  color: #888888;
-}
 .mosesplan__home-buttons {
   margin-top: 10px;
 }
@@ -67,6 +60,12 @@
   font-size: 0.8em;
   margin-top: 5px;
   margin-bottom: 5px;
+}
+.mosesplan__event-button {
+  cursor: pointer;
+}
+.mosesplan__currently-editing {
+  border: 3px solid red;
 }
 
 /*# sourceMappingURL=global.css.map */

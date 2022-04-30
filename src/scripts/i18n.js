@@ -17,6 +17,7 @@ function getLangObject( language ) {
 				addEventTitle: 'Neues Event',
 				deleteEventTitle: 'Event löschen',
 				settingsTitle: 'Einstellungen',
+				editEventTitle: 'Event bearbeiten',
 				addEventSubmitButton: 'Hinzufügen',
 				deleteEventSubmitButton: 'Löschen',
 				weekday: 'Wochentag',
@@ -44,10 +45,10 @@ function getLangObject( language ) {
 				error_no_weekday: 'Bitte wähle einen Wochentag.',
 				error_spacetime: 'Bitte lass die Raumzeit intakt. (Eventende muss nach Eventbeginn sein)',
 				tutorial: 'Tutorium',
-				confirm_loading: 'Beim Klicken des "Tutorien"-Buttons wird dein Browser eine Anfrage an Moses senden, um'
-				                 + ' deine Tutorien in den Kalender zu laden.<br />Deine Daten verlassen Moses nicht.',
 				showCustomEventsCheckbox: 'Eigene Events anzeigen',
-				showTutorialsCheckbox: 'Tutorien laden und anzeigen'
+				showTutorialsCheckbox: 'Geladene Tutorien anzeigen',
+				saveChanges: 'Änderungen speichern',
+				cancel: 'Abbrechen'
 			};
 			break;
 		case 'en':
@@ -59,6 +60,7 @@ function getLangObject( language ) {
 				tutorialButtonTitle: 'Show Tutorials',
 				addEventTitle: 'New event',
 				deleteEventTitle: 'Delete event',
+				editEventTitle: 'Edit event',
 				settingsTitle: 'Settings',
 				addEventSubmitButton: 'Add Event',
 				deleteEventSubmitButton: 'Delete',
@@ -82,14 +84,15 @@ function getLangObject( language ) {
 				event_host_placeholder: 'e.g. John Doe',
 				event_time: 'Event time',
 				start_time: 'Start',
+				end_time: 'End',
 				color: 'Color',
 				error_no_weekday: 'Please choose a day of the week.',
 				error_spacetime: 'Please leave spacetime intact. (Event end has to be after event start)',
 				tutorial: 'Tutorial',
-				confirm_loading: 'By clicking the "Tutorials" button, your browser will send a request across Moses to'
-				                 + ' show your tutorials in the calendar.<br />None of your data ever leaves Moses.',
 				showCustomEventsCheckbox: 'Show custom events',
-				showTutorialsCheckbox: 'Load tutorials'
+				showTutorialsCheckbox: 'Show loaded tutorials',
+				saveChanges: 'Save changes',
+				cancel: 'Cancel'
 			};
 	}
 

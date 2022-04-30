@@ -14,12 +14,12 @@ Fully supports both English and German based on the Moses language setting.**
 
 When installed, the extension will display the possibility to add custom events below your Moses calendar:
 
-![](images/1.png)
+![](doc/images/1_en.png)
 
 These events are preserved between reloads and even between sessions. They display exactly like native events created by
 Moses itself.
 
-![](images/2.png)
+![](doc/images/2_en.png)
 
 You can also toggle the display of custom events, and delete events you no longer need.
 
@@ -42,12 +42,12 @@ Moses-Spracheinstellung.**
 Nach der Installation zeigt dir die Erweiterung die Möglichkeit an, eigene Events unter deinem Moses-Kalender
 hinzuzufügen:
 
-![](images/1_de.png)
+![](doc/images/1_de.png)
 
 Die hinzugefügten Events bleiben zwischen Sitzungen erhalten. Sie werden genau wie von Moses selbst erzeugte Ereignisse
 dargestellt:
 
-![](images/2_de.png)
+![](doc/images/2_de.png)
 
 Du kannst auch die Anzeige von eigenen Events ein- und ausschalten, und nicht mehr benötigte Ereignisse löschen.
 
@@ -57,17 +57,26 @@ Du kannst auch die Anzeige von eigenen Events ein- und ausschalten, und nicht me
   machen, und integrationsorientierte Menschen traurig. Die Wahrheit ist, dass es nur ein nettes Werkzeug ist, um deinen
   Stundenplan zu ordnen, und ich möchte weder in eine Datenschutzkatastrophe verwickelt werden, noch möchte ich einen
   einzelnen verantwortlichen Server hosten.
-* **Kann ich darauf vertrauen, dass diese Extension meine [Daten/Noten/Ergebnisse] nicht klaut?** Oft steht hier sowas wie: "Natürlich haben wir die höchsten Standards, wenn es um ..." und so weiter. Das sind Buzzwords. Tatsache ist: Mein Name steht genau hier. Der Code steht genau hier. Warum sollte ich so dumm sein, ausgerechnet Git zu benutzen, um Universitätsbetrug zu begehen? Jetzt mal ehrlich.
-* **Ich hab einen Bug gefunden!** Bitte schreib ein GitHub-Issue. Ich akzeptiere aus lizenzrechtlichen Gründen keine Pull-Requests.
+* **Kann ich darauf vertrauen, dass diese Extension meine [Daten/Noten/Ergebnisse] nicht klaut?** Oft steht hier sowas
+  wie: "Natürlich haben wir die höchsten Standards, wenn es um ..." und so weiter. Das sind Buzzwords. Tatsache ist:
+  Mein Name steht genau hier. Der Code steht genau hier. Warum sollte ich so dumm sein, ausgerechnet Git zu benutzen, um
+  Universitätsbetrug zu begehen? Jetzt mal ehrlich.
+* **Ich hab einen Bug gefunden!** Bitte schreib ein GitHub-Issue. Ich akzeptiere aus lizenzrechtlichen Gründen keine
+  Pull-Requests.
 
 ## Known Issues
 
-None.
+* On some pages, events get shown twice when switching tabs. This is temporarily fixed by toggling the checkboxes in
+  Settings again.
 
 ## License
 
-This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later
+version.
 
-This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-You should have received a copy of the GNU General Public License along with this program. If not, see <https://www.gnu.org/licenses/>.
+You should have received a copy of the GNU General Public License along with this program. If not,
+see <https://www.gnu.org/licenses/>.
