@@ -11,6 +11,7 @@
       "js": [
         "lib/jquery-3.6.0.js",
         "scripts/global-styles.js",
+        "scripts/misc_helpers.js",
         "scripts/i18n.js",
         "scripts/storage_manager.js",
         "scripts/settings_manager.js",

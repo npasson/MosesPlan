@@ -2,29 +2,6 @@ const RENDER_PIXELS_PER_HOUR = 40;
 const RENDER_HOUR_OFFSET     = 8;
 
 /**
- * ECMA2016 / ES6
- * taken from: https://gist.github.com/danieliser/b4b24c9f772066bcf0a6
- */
-function convertHexToRGBA( hexCode, opacity = 1 ) {
-	let hex = hexCode.replace( '#', '' );
-
-	if ( hex.length === 3 ) {
-		hex = `${hex[0]}${hex[0]}${hex[1]}${hex[1]}${hex[2]}${hex[2]}`;
-	}
-
-	const r = parseInt( hex.substring( 0, 2 ), 16 );
-	const g = parseInt( hex.substring( 2, 4 ), 16 );
-	const b = parseInt( hex.substring( 4, 6 ), 16 );
-
-	/* Backward compatibility for whole number based opacity values. */
-	if ( opacity > 1 && opacity <= 100 ) {
-		opacity = opacity / 100;
-	}
-
-	return `rgba(${r},${g},${b},${opacity})`;
-}
-
-/**
  * Gets the name of a weekday.
  *
  * @param index The index of the weekday, from 0 to 4.
@@ -206,7 +183,7 @@ function render( events ) {
 		days.push( $( $( this ).find( '.moses-calendar-day-body-inner' )[0] ) );
 	} );
 
-	loadValue( Settings.RENDER_EVENTS ).then( value => {
+	loadValue( StorageKey.RENDER_EVENTS ).then( value => {
 		if ( value && events ) {
 			// render custom events if everything is okay
 			for ( const event of events ) {
@@ -228,7 +205,7 @@ function render( events ) {
 		// whether or not we rendered the events, we clean the calendar once
 		cleanEvents( days );
 
-		loadValue( Settings.RENDER_TUTORIALS ).then( value => {
+		loadValue( StorageKey.RENDER_TUTORIALS ).then( value => {
 			if ( !value ) {
 				return;
 			}

@@ -1,3 +1,7 @@
+/**
+ * Returns a fetch of the CSS for the extension.
+ * @returns {Promise<Response>}
+ */
 function getGlobalStyles() {
 	let css_url;
 	if ( typeof browser !== 'undefined' ) {
