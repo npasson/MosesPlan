@@ -2,7 +2,7 @@
  * The extension version.
  * @type {string}
  */
-const VERSION = '0.4.2';
+const VERSION = '0.5';
 
 /**
  * The settings keys for local storage.
