@@ -154,15 +154,6 @@ function setup( safe = false ) {
 
 	// we're safe here
 
-	// add a version number to the footer
-	$( '#mosesplan-version-hint' ).remove();
-	$( $( '#footer > .pull-right' )[0] ).before( $( `
-		<div class="mosesplan__version-hint" >
-            <small>MosesPlan</small><br><span class="fa fa-space fa-calendar"></span>
-            v${VERSION}
-        </div>
-	` ) );
-
 	// remove previous instance, in case plugin is reloaded
 	let $prevOptions = $( '#mosesplan' );
 	if ( $prevOptions.length !== 0 ) {
@@ -208,7 +199,8 @@ function main() {
 	let whitelist = [
 		'moses/verzeichnis/persoenliche_uebersicht/stundenplan.html',
 		'moses/tutorium/stundenplan.html',
-		'moses/verzeichnis/veranstaltungen/veranstaltung.html'
+		'moses/verzeichnis/veranstaltungen/veranstaltung.html',
+		'moses/verzeichnis/veranstaltungen/lv_vorlage.html'
 	];
 
 	// stop if page is wrong
@@ -231,6 +223,23 @@ function main() {
 			setTimeout( setup );
 		}
 	} );
+
+	// add a version number to the footer
+	// this CSS has to be inline to be included even if the full thing isn't loaded
+	$( '.mosesplan__version-hint' ).remove();
+	$( $( '#footer > .pull-right' )[0] ).before( $( `
+		<div class="mosesplan__version-hint" >
+			<style>.mosesplan__version-hint {
+			  display: inline-block;
+			  padding: 0 20px;
+			  float: left;
+			  line-height: 20px;
+			  color: #888888;
+			}</style>
+            <small>MosesPlan</small><br><span class="fa fa-space fa-calendar"></span>
+            v${VERSION}
+        </div>
+	` ) );
 
 	// make sure we stop at single day and custom range... for now
 	let $main = $( '#main' );
