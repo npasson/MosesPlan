@@ -17,6 +17,7 @@ function getLangObject( language ) {
 				addEventTitle: 'Neues Event',
 				deleteEventTitle: 'Event löschen',
 				settingsTitle: 'Einstellungen',
+				editEventTitle: 'Event bearbeiten',
 				addEventSubmitButton: 'Hinzufügen',
 				deleteEventSubmitButton: 'Löschen',
 				weekday: 'Wochentag',
@@ -47,7 +48,9 @@ function getLangObject( language ) {
 				confirm_loading: 'Beim Klicken des "Tutorien"-Buttons wird dein Browser eine Anfrage an Moses senden, um'
 				                 + ' deine Tutorien in den Kalender zu laden.<br />Deine Daten verlassen Moses nicht.',
 				showCustomEventsCheckbox: 'Eigene Events anzeigen',
-				showTutorialsCheckbox: 'Tutorien laden und anzeigen'
+				showTutorialsCheckbox: 'Tutorien laden und anzeigen',
+				saveChanges: 'Änderungen speichern',
+				cancel: 'Abbrechen'
 			};
 			break;
 		case 'en':
@@ -59,6 +62,7 @@ function getLangObject( language ) {
 				tutorialButtonTitle: 'Show Tutorials',
 				addEventTitle: 'New event',
 				deleteEventTitle: 'Delete event',
+				editEventTitle: 'Edit event',
 				settingsTitle: 'Settings',
 				addEventSubmitButton: 'Add Event',
 				deleteEventSubmitButton: 'Delete',
@@ -89,7 +93,9 @@ function getLangObject( language ) {
 				confirm_loading: 'By clicking the "Tutorials" button, your browser will send a request across Moses to'
 				                 + ' show your tutorials in the calendar.<br />None of your data ever leaves Moses.',
 				showCustomEventsCheckbox: 'Show custom events',
-				showTutorialsCheckbox: 'Load tutorials'
+				showTutorialsCheckbox: 'Load tutorials',
+				saveChanges: 'Save changes',
+				cancel: 'Cancel'
 			};
 	}
 

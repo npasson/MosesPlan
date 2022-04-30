@@ -82,11 +82,13 @@
 			margin-top: 5px;
 			margin-bottom: 5px;
 		}
-	}
-}
 
-.fa.fa-fw {
-	&.fam-cal-pen::before {
-		content: '\f333';
+		&event-button {
+			cursor: pointer;
+		}
+
+		&currently-editing {
+			border: 3px solid red;
+		}
 	}
 }

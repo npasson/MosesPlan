@@ -177,6 +177,23 @@ function createEvent( data ) {
 	} );
 }
 
+function deleteEvent( uuid ) {
+	return new Promise( resolve => {
+		loadEvents().then(
+			events => {
+				for ( let i = 0; i < events.length; i++ ) {
+					if ( events[i].uuid === uuid ) {
+						events.splice( i, 1 );
+						break;
+					}
+				}
+
+				saveEvents( events ).then( loadEvents ).then( render ).then( resolve );
+			}
+		);
+	} );
+}
+
 function getBlacklist() {
 	return new Promise( resolve => {
 		loadValue( Settings.TUTORIAL_BLACKLIST ).then( blacklist => {

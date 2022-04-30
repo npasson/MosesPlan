@@ -68,11 +68,13 @@ function getBlock( event, type = 'custom' ) {
 		<div class="moses-calendar-event-wrapper mosesplan__event mosesplan__event--${type}" 
 		     style="width: 100%; height: ${height}px; top: ${top_offset}px; left: 0.000000%;"
 		     data-uuid="${event.uuid}"
+		     id="mosesplan-event-${event.uuid}"
 		     >
 			<div class="moses-calendar-event ellipsis">
 				<span class="ellipsis">${event.name}</span>
 				<br><small class="ellipsis">${event.location}</small>
 				<br><small class="ellipsis">${event.host}</small>
+				<div class="bot-right mosesplan__event-buttons"></div>
             </div>
         </div>
 	` );
@@ -87,6 +89,32 @@ function getBlock( event, type = 'custom' ) {
 				'border-color': `${event.color}`,
 				'background-color': `${convertHexToRGBA( event.color, 0.3 )}`
 			} );
+
+			let $button_array = $event.find( '.mosesplan__event-buttons' );
+
+			$button_array.append( $( `
+					<span data-uuid="${event.uuid}" 
+					      class="mosesplan__event-button mosesplan__event-button--edit fa fa-fw fa-pencil"/>`
+			) );
+
+			$button_array.children().last().on( 'click', function () {
+				let uuid = $( this ).data( 'uuid' );
+				showEditPopup( uuid );
+			} );
+
+			$button_array.append( $( `
+					<span data-uuid="${event.uuid}" 
+					      class="mosesplan__event-button mosesplan__event-button--delete fa fa-fw fam-cal-remove"/>`
+			) );
+
+			$button_array.children().last().on( 'click', function () {
+				let uuid = $( this ).data( 'uuid' );
+				deleteEvent( uuid ).then( () => {
+					$( '.mosesplan__popover' ).remove();
+					$( '.mosesplan__popup--edit' ).remove();
+				} );
+			} );
+
 			break;
 	}
 

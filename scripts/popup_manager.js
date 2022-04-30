@@ -42,6 +42,13 @@ function applyPopupStyles( $popup ) {
 	return $popup;
 }
 
+function closeAllPopups() {
+	let $prevPopup = $( '.mosesplan__popup' );
+	if ( $prevPopup.length !== 0 ) {
+		$prevPopup.remove();
+	}
+}
+
 function handleColorSelection( e ) {
 	e.preventDefault();
 
@@ -97,17 +104,13 @@ function _createBarebonesPopupWrapper() {
 	return $popup;
 }
 
-/**
- * Handles the submission of the Add Event form.
- * @param event The FormEvent from the Add Event form.
- */
-function handleAddEvent( event ) {
+function getEventDataFromFormEvent( event ) {
 	let $form = $( '.mosesplan__popup-form' );
 
 	if ( !$form[0].checkValidity() ) {
 		$form[0].reportValidity();
 		event.preventDefault();
-		return;
+		return false;
 	}
 
 	let data = event.target.elements;
@@ -122,26 +125,67 @@ function handleAddEvent( event ) {
 	let start    = parseInt( data.start.value );
 	let end      = parseInt( data.end.value );
 
+	let uuid = null;
+	try {
+		uuid = data.edit_uuid.value;
+	} catch ( e ) {
+		// ignore
+	}
+
 	if ( weekday !== weekday ) {
 		// lmao wtf js
 		alert( window.mp_strings.error_no_weekday );
-		return;
+		return false;
 	}
 
 	if ( start >= end ) {
 		alert( window.mp_strings.error_spacetime );
+		return false;
+	}
+
+	if ( uuid !== null ) {
+		return {
+			uuid: uuid,
+			name: name,
+			location: location,
+			host: host,
+			weekday: weekday,
+			start: start,
+			end: end,
+			color: color
+		};
+	}
+
+	return {
+		name: name,
+		location: location,
+		host: host,
+		weekday: weekday,
+		start: start,
+		end: end,
+		color: color
+	};
+}
+
+/**
+ * Handles the submission of the Add Event form.
+ * @param event The FormEvent from the Add Event form.
+ */
+function handleAddEvent( event ) {
+	let event_data = getEventDataFromFormEvent( event );
+	if ( !event_data ) {
 		return;
 	}
 
 	createEvent( {
 		uuid: uuidv4(),
-		name: name,
-		location: location,
-		host: host,
-		weekday: weekday,
-		start_hour: start,
-		end_hour: end,
-		color: color
+		name: event_data.name,
+		location: event_data.location,
+		host: event_data.host,
+		weekday: event_data.weekday,
+		start_hour: event_data.start,
+		end_hour: event_data.end,
+		color: event_data.color
 	} );
 }
 
@@ -167,10 +211,7 @@ function handleWeekdaySelection( e ) {
  * Shows an Add Event dialogue, removing the old one if needed.
  */
 function showAddPopup() {
-	let $prevPopup = $( '.mosesplan__popup' );
-	if ( $prevPopup.length !== 0 ) {
-		$prevPopup.remove();
-	}
+	closeAllPopups();
 
 	let $popup = _createBarebonesPopupWrapper();
 
@@ -284,36 +325,19 @@ function showAddPopup() {
  */
 function handleDeleteEvent( event ) {
 	let data = event.target.elements;
-
 	event.preventDefault();
 
 	let uuid = data.delete.value;
-
-	loadEvents().then(
-		events => {
-			for ( let i = 0; i < events.length; i++ ) {
-				if ( events[i].uuid === uuid ) {
-					events.splice( i, 1 );
-					break;
-				}
-			}
-
-			saveEvents( events ).then( loadEvents ).then( render ).then( showDeletePopup );
-		}
-	);
+	deleteEvent( uuid ).then( showDeletePopup );
 }
 
 /**
  * Shows a Delete Event dialogue, removing the old one if needed.
  */
 function showDeletePopup() {
-	let $prevPopup = $( '.mosesplan__popup' );
-	if ( $prevPopup.length !== 0 ) {
-		$prevPopup.remove();
-	}
+	closeAllPopups();
 
 	let $popup = _createBarebonesPopupWrapper();
-
 	$popup.find( '.mosesplan__popup__title' ).text( window.mp_strings.deleteEventTitle );
 
 	let $popup_form = `
@@ -393,10 +417,7 @@ function showDeletePopup() {
 }
 
 function showSettingsPopup() {
-	let $prevPopup = $( '.mosesplan__popup' );
-	if ( $prevPopup.length !== 0 ) {
-		$prevPopup.remove();
-	}
+	closeAllPopups();
 
 	let $popup = _createBarebonesPopupWrapper();
 
@@ -522,4 +543,115 @@ function showSettingsPopup() {
 	// apply style and add
 	$popup = applyPopupStyles( $popup );
 	$( '.mosesplan' ).append( $popup );
+}
+
+function handleEditEvent( form_event ) {
+	let event_data = getEventDataFromFormEvent( form_event );
+	if ( !event_data ) {
+		return;
+	}
+
+	loadEvents().then( events => {
+
+		for ( let i = 0; i < events.length; i++ ) {
+			let event = events[i];
+
+			if ( event.uuid === event_data.uuid ) {
+				events[i] = {
+					...event,
+					...event_data
+				};
+
+				saveEvents( events ).then( loadEvents )
+				                    .then( render )
+				                    .then( closeAllPopups );
+				return;
+			}
+		}
+		for ( let event_element of events ) {
+
+		}
+
+		alert( 'Error -4: Edit failed. Please notify the developer about this. Event UUID: ' + uuid );
+	} );
+}
+
+function showEditPopup( uuid ) {
+	closeAllPopups();
+
+	// for this function, we're just modifying an add dialogue and pre-filling it
+	showAddPopup();
+
+	$( '.mosesplan__popup__title' ).text( window.mp_strings.editEventTitle );
+	let $form  = $( '.mosesplan__popup-form' );
+	let $popup = $( '.mosesplan__popup' );
+	$popup.addClass( 'mosesplan__popup--edit' );
+
+	loadEvents().then( ( events ) => {
+		/**
+		 * @type Event
+		 */
+		let event;
+		for ( const event_element of events ) {
+			if ( event_element.uuid === uuid ) {
+				event = event_element;
+				break;
+			}
+		}
+
+		if ( typeof event === 'undefined' ) {
+			alert( 'Error -4: Could not find event. Please notify the developer about this. Event UUID: ' + uuid );
+			closeAllPopups();
+			return;
+		}
+
+		// mark edit event (and remove mark from others)
+		$( '.mosesplan__event' ).removeClass( 'mosesplan__currently-editing' );
+		$( `#mosesplan-event-${event.uuid}` ).addClass( 'mosesplan__currently-editing' );
+
+		// basic text attributes
+		$form.find( '[name=name]' )
+		     .val( event.name );
+		$form.find( '[name=location]' )
+		     .val( event.location );
+		$form.find( '[name=host]' )
+		     .val( event.host );
+
+		// weekday
+		$form.find( `.mosesplan__weekdays button[value=${event.weekday}]` )
+		     .addClass( 'active' );
+		$form.find( `#mosesplan-weekday` )
+		     .val( event.weekday );
+
+		// color
+		$form.find( `.mosesplan__colors a[data-color="${event.color}"]` )
+		     .addClass( 'active' );
+		$form.find( `#mosesplan-color` )
+		     .attr( 'value', event.color );
+
+		// start time
+		$form.find( `#start option[value=${event.start}]` )
+		     .attr( 'selected', 'selected' );
+		$form.find( `#end option[value=${event.end}]` )
+		     .attr( 'selected', 'selected' );
+
+		// edit submit button
+		let $submit = $form.find( 'button[type=submit]' );
+		$submit.text( window.mp_strings.saveChanges );
+
+		$form.append( `<input type="hidden" name="edit_uuid" value="${event.uuid}">` );
+
+		$form.off( 'submit' );
+		$form.on( 'submit', handleEditEvent );
+
+		$form.find( '.action-buttons' )
+		     .append( `<button id="mosesplan-cancel-edit" class="btn">${window.mp_strings.cancel}</button>` );
+
+		$form.find( '#mosesplan-cancel-edit' )
+		     .on( 'click', ( e ) => {
+			     e.preventDefault();
+			     loadEvents().then( render ).then( closeAllPopups );
+		     } );
+	} );
+
 }

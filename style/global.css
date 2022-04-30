@@ -61,9 +61,11 @@
   margin-top: 5px;
   margin-bottom: 5px;
 }
-
-.fa.fa-fw.fam-cal-pen::before {
-  content: '\f333';
+.mosesplan__event-button {
+  cursor: pointer;
+}
+.mosesplan__currently-editing {
+  border: 3px solid red;
 }
 
 /*# sourceMappingURL=global.css.map */
