@@ -46,7 +46,7 @@ function getLangObject( language ) {
 				error_spacetime: 'Bitte lass die Raumzeit intakt. (Eventende muss nach Eventbeginn sein)',
 				tutorial: 'Tutorium',
 				showCustomEventsCheckbox: 'Eigene Events anzeigen',
-				showTutorialsCheckbox: 'Tutorien laden und anzeigen',
+				showTutorialsCheckbox: 'Geladene Tutorien anzeigen',
 				saveChanges: 'Änderungen speichern',
 				cancel: 'Abbrechen'
 			};
@@ -90,7 +90,7 @@ function getLangObject( language ) {
 				error_spacetime: 'Please leave spacetime intact. (Event end has to be after event start)',
 				tutorial: 'Tutorial',
 				showCustomEventsCheckbox: 'Show custom events',
-				showTutorialsCheckbox: 'Load tutorials',
+				showTutorialsCheckbox: 'Show loaded tutorials',
 				saveChanges: 'Save changes',
 				cancel: 'Cancel'
 			};
