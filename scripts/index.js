@@ -1,4 +1,4 @@
-const VERSION = '0.4.1';
+const VERSION = '0.4.2';
 
 const Settings = {
 	RENDER_EVENTS: 'mosesplan_render-events',
@@ -20,6 +20,56 @@ function getCookie( cname ) {
 		}
 	}
 	return '';
+}
+
+/**
+ * Gets a GET parameter.
+ * Taken from https://stackoverflow.com/a/5448595
+ *
+ * @param key The GET key.
+ * @returns {null|string} The value, or null if undefined.
+ */
+function getGetParameter( key ) {
+	let result = null;
+	let tmp    = [];
+	location.search
+	        .substring( 1 )
+	        .split( '&' )
+	        .forEach( function ( item ) {
+		        tmp = item.split( '=' );
+		        if ( tmp[0] === key ) {
+			        result = decodeURIComponent( tmp[1] );
+		        }
+	        } );
+	return result;
+}
+
+/**
+ * Removes a parameter from the GET request and returns the modified URL.
+ * Taken from https://stackoverflow.com/a/16941754
+ *
+ * @param key The key of the parameter to remove.
+ * @param sourceURL The original URL.
+ * @returns {string} The modified URL without the parameter.
+ */
+function removeGetParameter( key, sourceURL ) {
+	let retval      = sourceURL.split( '?' )[0];
+	let param;
+	let params_arr  = [];
+	let queryString = ( sourceURL.indexOf( '?' ) !== -1 ) ? sourceURL.split( '?' )[1] : '';
+	if ( queryString !== '' ) {
+		params_arr = queryString.split( '&' );
+		for ( let i = params_arr.length - 1; i >= 0; i -= 1 ) {
+			param = params_arr[i].split( '=' )[0];
+			if ( param === key ) {
+				params_arr.splice( i, 1 );
+			}
+		}
+		if ( params_arr.length ) {
+			retval = retval + '?' + params_arr.join( '&' );
+		}
+	}
+	return retval;
 }
 
 /**
@@ -48,6 +98,7 @@ function settingsButton_onClick( e ) {
 	e.preventDefault();
 	showSettingsPopup();
 }
+
 /**
  * Creates the array of buttons shown to the user below the calendar.
  * @param $mosesplan The jQuery object to insert the button group into.
@@ -185,6 +236,16 @@ function main() {
 	let $main = $( '#main' );
 	if ( $main.find( '#freechoice' ).length > 0
 	     || $main.find( '#single-day' ).length > 0 ) {
+		return;
+	}
+
+	// reset things if user wishes to do so
+	if ( getGetParameter( 'mosesplan_action' ) === 'reset' ) {
+		clearLocalStorage().then( () => {
+			alert( 'MosesPlan has been reset to factory settings!' );
+			// reload page and remove action parameter
+			window.location.replace( removeGetParameter( 'mosesplan_action', window.location.href ) );
+		} );
 		return;
 	}
 
