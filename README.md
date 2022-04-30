@@ -14,12 +14,12 @@ Fully supports both English and German based on the Moses language setting.**
 
 When installed, the extension will display the possibility to add custom events below your Moses calendar:
 
-![](images/1.png)
+![](doc/images/1.png)
 
 These events are preserved between reloads and even between sessions. They display exactly like native events created by
 Moses itself.
 
-![](images/2.png)
+![](doc/images/2.png)
 
 You can also toggle the display of custom events, and delete events you no longer need.
 
@@ -42,12 +42,12 @@ Moses-Spracheinstellung.**
 Nach der Installation zeigt dir die Erweiterung die Möglichkeit an, eigene Events unter deinem Moses-Kalender
 hinzuzufügen:
 
-![](images/1_de.png)
+![](doc/images/1_de.png)
 
 Die hinzugefügten Events bleiben zwischen Sitzungen erhalten. Sie werden genau wie von Moses selbst erzeugte Ereignisse
 dargestellt:
 
-![](images/2_de.png)
+![](doc/images/2_de.png)
 
 Du kannst auch die Anzeige von eigenen Events ein- und ausschalten, und nicht mehr benötigte Ereignisse löschen.
 

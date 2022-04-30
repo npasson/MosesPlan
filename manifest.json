@@ -9,31 +9,31 @@
         "*://moseskonto.tu-berlin.de/*"
       ],
       "js": [
-        "lib/jquery-3.6.0.js",
-        "scripts/global-styles.js",
-        "scripts/misc_helpers.js",
-        "scripts/i18n.js",
-        "scripts/storage_manager.js",
-        "scripts/settings_manager.js",
-        "scripts/tutorial_manager.js",
-        "scripts/render_helpers.js",
-        "scripts/popover_manager.js",
-        "scripts/render_manager.js",
-        "scripts/popup_manager.js",
-        "scripts/index.js"
+        "extension/lib/jquery-3.6.0.js",
+        "extension/scripts/global-styles.js",
+        "extension/scripts/misc_helpers.js",
+        "extension/scripts/i18n.js",
+        "extension/scripts/storage_manager.js",
+        "extension/scripts/settings_manager.js",
+        "extension/scripts/tutorial_manager.js",
+        "extension/scripts/render_helpers.js",
+        "extension/scripts/popover_manager.js",
+        "extension/scripts/render_manager.js",
+        "extension/scripts/popup_manager.js",
+        "extension/scripts/index.js"
       ]
     }
   ],
   "web_accessible_resources": [
-    "style/global.css"
+    "extension/style/global.css"
   ],
   "permissions": [
     "storage"
   ],
   "icons": {
-    "16": "images/icon_16.png",
-    "32": "images/icon_32.png",
-    "48": "images/icon_48.png",
-    "128": "images/icon_128.png"
+    "16": "extension/images/icon_16.png",
+    "32": "extension/images/icon_32.png",
+    "48": "extension/images/icon_48.png",
+    "128": "extension/images/icon_128.png"
   }
 }
