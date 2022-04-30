@@ -45,8 +45,6 @@ function getLangObject( language ) {
 				error_no_weekday: 'Bitte wähle einen Wochentag.',
 				error_spacetime: 'Bitte lass die Raumzeit intakt. (Eventende muss nach Eventbeginn sein)',
 				tutorial: 'Tutorium',
-				confirm_loading: 'Beim Klicken des "Tutorien"-Buttons wird dein Browser eine Anfrage an Moses senden, um'
-				                 + ' deine Tutorien in den Kalender zu laden.<br />Deine Daten verlassen Moses nicht.',
 				showCustomEventsCheckbox: 'Eigene Events anzeigen',
 				showTutorialsCheckbox: 'Tutorien laden und anzeigen',
 				saveChanges: 'Änderungen speichern',
@@ -90,8 +88,6 @@ function getLangObject( language ) {
 				error_no_weekday: 'Please choose a day of the week.',
 				error_spacetime: 'Please leave spacetime intact. (Event end has to be after event start)',
 				tutorial: 'Tutorial',
-				confirm_loading: 'By clicking the "Tutorials" button, your browser will send a request across Moses to'
-				                 + ' show your tutorials in the calendar.<br />None of your data ever leaves Moses.',
 				showCustomEventsCheckbox: 'Show custom events',
 				showTutorialsCheckbox: 'Load tutorials',
 				saveChanges: 'Save changes',

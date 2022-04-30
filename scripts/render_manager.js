@@ -216,9 +216,7 @@ function render( events ) {
 				return;
 			}
 
-			// this is the only time the session cookie is read, and it's only passed
-			// to getTutorialPageRaw() to get the tutorial page (to show tutorials).
-			// Usage of the session cookie can be prevented by not using the Tutorials option.
+			// Session cookie is only passed to getTutorialPageRaw() to get the tutorial page (to show tutorials).
 			getTutorialPageRaw( getCookie( 'JSESSIONID' ) )
 				.then( parseTutorialAnswer )
 				.then( filterBlacklist )
