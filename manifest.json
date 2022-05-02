@@ -10,7 +10,7 @@
       ],
       "js": [
         "src/lib/jquery-3.6.0.js",
-        "src/scripts/global-styles.js",
+        "src/scripts/fetch_helper.js",
         "src/scripts/misc_helpers.js",
         "src/scripts/i18n.js",
         "src/scripts/storage_manager.js",
@@ -25,7 +25,9 @@
     }
   ],
   "web_accessible_resources": [
-    "src/style/global.css"
+    "src/style/global.css",
+    "src/sites/extension.html",
+    "src/sites/version.html"
   ],
   "permissions": [
     "storage"

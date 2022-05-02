@@ -50,8 +50,7 @@ function handleSettingsButtonClick( e ) {
 function insertButtonArray( $mosesplan ) {
 	let buttons = [];
 
-	let $buttonGroup = $( document.createElement( 'div' ) );
-	$buttonGroup.addClass( 'btn-group mosesplan__home-buttons' );
+	let $buttonGroup = $mosesplan.find( '.mosesplan__home-buttons' );
 
 	let strings = [
 		window.mp_strings.addButtonTitle,
@@ -69,9 +68,41 @@ function insertButtonArray( $mosesplan ) {
 		buttons.push( $button );
 	}
 
-	$mosesplan.append( $buttonGroup );
-
 	return buttons;
+}
+
+
+function buildExtension( mosesplan_html ) {
+	// remove previous instance, in case plugin is reloaded
+	$( '#mosesplan' ).remove();
+
+	// load language and load i18n strings
+	let lang          = $( '.language-button .text-primary' ).text();
+	window.mp_strings = getLangObject( lang );
+
+	// add mosesplan object
+	let $mosesplan = $( mosesplan_html );
+	$( '.moses-calendar' ).after( $mosesplan );
+
+	// add style to the object
+	fetchGlobalStyle().then( ( text ) => {
+		$mosesplan.append( $( `<style>${text}</style>` ) );
+	} );
+
+	// add buttons
+	let buttons = insertButtonArray( $mosesplan );
+
+	let $addButton    = buttons[0];
+	let $deleteButton = buttons[1];
+	let $toggleButton = buttons[2];
+
+	// add button event listeners
+	$addButton[0].addEventListener( 'click', handleAddButtonClick );
+	$deleteButton[0].addEventListener( 'click', handleDeleteButtonClick );
+	$toggleButton[0].addEventListener( 'click', handleSettingsButtonClick );
+
+	// render stuff
+	loadEvents().then( render );
 }
 
 /**
@@ -95,47 +126,12 @@ function setup( safe = false ) {
 		}
 	}
 
-	// we're safe here
-
-	// remove previous instance, in case plugin is reloaded
-	let $prevOptions = $( '#mosesplan' );
-	if ( $prevOptions.length !== 0 ) {
-		$prevOptions.remove();
-	}
-
-	// load language and load i18n strings
-	let lang          = $( '.language-button .text-primary' ).text();
-	window.mp_strings = getLangObject( lang );
-
-	// add mosesplan object
-	let $mosesplan = $( document.createElement( 'div' ) );
-	$mosesplan.addClass( 'mosesplan' );
-	$mosesplan.attr( 'id', 'mosesplan' );
-	$calendar.after( $mosesplan );
-
-	// add style to the object
-	getGlobalStyles().then( ( response ) => {
-		response.text().then( text => {
-			$mosesplan.append( $( `
-				<style>${text}</style>
-			` ) );
-		} );
-	} );
-
-	// add buttons
-	let buttons = insertButtonArray( $mosesplan );
-
-	let $addButton    = buttons[0];
-	let $deleteButton = buttons[1];
-	let $toggleButton = buttons[2];
-
-	// add button event listeners
-	$addButton[0].addEventListener( 'click', handleAddButtonClick );
-	$deleteButton[0].addEventListener( 'click', handleDeleteButtonClick );
-	$toggleButton[0].addEventListener( 'click', handleSettingsButtonClick );
-
-	// render stuff
-	loadEvents().then( render );
+	fetchSiteText( 'extension' )
+		.then( html => {
+			console.log( html );
+			return html;
+		} )
+		.then( buildExtension );
 }
 
 /**
@@ -171,21 +167,12 @@ function main() {
 	} );
 
 	// add a version number to the footer
-	// this CSS has to be inline to be included even if the full thing isn't loaded
 	$( '.mosesplan__version-hint' ).remove();
-	$( $( '#footer > .pull-right' )[0] ).before( $( `
-		<div class="mosesplan__version-hint" >
-			<style>.mosesplan__version-hint {
-			  display: inline-block;
-			  padding: 0 20px;
-			  float: left;
-			  line-height: 20px;
-			  color: #888888;
-			}</style>
-            <small>MosesPlan</small><br><span class="fa fa-space fa-calendar"></span>
-            v${VERSION}
-        </div>
-	` ) );
+	fetchSiteText( 'version' ).then( html => {
+		let $version = $( html );
+		$version.find( '#mosesplan-version-number' ).text( VERSION );
+		$( $( '#footer > .pull-right' )[0] ).before( $version );
+	} );
 
 	// make sure we stop at single day and custom range... for now
 	let $main = $( '#main' );
