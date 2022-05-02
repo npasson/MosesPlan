@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.5 (2022-05-02)
+
+* Fixed edit highlight persisting
+
 ## v0.5 (2022-04-30)
 
 * Events can now be edited
