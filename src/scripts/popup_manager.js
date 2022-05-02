@@ -1,4 +1,5 @@
 function closeAllPopups() {
+	$('.mosesplan__currently-editing').removeClass('mosesplan__currently-editing');
 	let $prevPopup = $( '.mosesplan__popup' );
 	if ( $prevPopup.length !== 0 ) {
 		$prevPopup.remove();
