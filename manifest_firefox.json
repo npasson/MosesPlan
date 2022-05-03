@@ -6,7 +6,7 @@
   "content_scripts": [
     {
       "matches": [
-        "*://moseskonto.tu-berlin.de/*"
+        "https://moseskonto.tu-berlin.de/*"
       ],
       "js": [
         "src/lib/jquery-3.6.0.js",
