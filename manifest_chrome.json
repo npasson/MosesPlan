@@ -1,12 +1,12 @@
 {
-  "manifest_version": 2,
+  "manifest_version": 3,
   "name": "MosesPlan",
-  "version": "0.5.1",
+  "version": "0.5",
   "description": "Add custom events to the TU Berlin 'Moses' timetable.",
   "content_scripts": [
     {
       "matches": [
-        "*://moseskonto.tu-berlin.de/*"
+        "https://moseskonto.tu-berlin.de/*"
       ],
       "js": [
         "src/lib/jquery-3.6.0.js",
@@ -25,7 +25,14 @@
     }
   ],
   "web_accessible_resources": [
-    "src/style/global.css"
+    {
+      "resources": [
+        "src/style/global.css"
+      ],
+      "matches": [
+        "https://moseskonto.tu-berlin.de/*"
+      ]
+    }
   ],
   "permissions": [
     "storage"
