@@ -1,5 +1,5 @@
 .mosesplan button {
-  outline: none;
+  outline: none !important;
 }
 .mosesplan input[type=checkbox][disabled] + label {
   opacity: 0.5;

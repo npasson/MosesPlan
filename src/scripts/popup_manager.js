@@ -79,11 +79,11 @@ function getDefaultColorButtonsObject() {
 	let ret = $( '<div class="form-group btn-group mosesplan__colors" style="display: block"></div>' );
 
 	for ( const color of defaults ) {
-		let $button = $( `<a 
-			class="mosesplan__pseudo-button mosesplan__color-button"
+		let $button = $( `<button 
+			class="mosesplan__color-button"
 			data-color="${color}" 
 			style="background-color:${color};"
-			>&nbsp;&nbsp;&nbsp;</a>` );
+			>&nbsp;&nbsp;&nbsp;</button>` );
 
 		$button.on( 'click', handleColorSelection );
 
@@ -647,7 +647,7 @@ function showEditPopup( uuid ) {
 		     .val( event.weekday );
 
 		// color
-		$form.find( `.mosesplan__colors a[data-color="${event.color}"]` )
+		$form.find( `.mosesplan__colors .mosesplan__color-button[data-color="${event.color}"]` )
 		     .addClass( 'active' );
 		$form.find( `#mosesplan-color` )
 		     .attr( 'value', event.color );
