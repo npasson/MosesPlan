@@ -1,3 +1,10 @@
+# remove JetBrains settings
 /.idea
+
+# manifest is split in two, any file named manifest.json is dev-only
+# and should not be committed
+/manifest.json
+
+# don't commit SCSS compiler artifacts
 /src/style/global.css.map
 /src/style/.sass-cache/
