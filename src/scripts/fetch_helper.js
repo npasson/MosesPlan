@@ -42,8 +42,6 @@ function fetchSiteText( name ) {
 	const site_path = `src/sites/${name}.html`;
 	const site_url  = getURL( site_path );
 
-	console.log( site_url );
-
 	return new Promise( resolve => {
 		fetch( site_url ).then( ( response ) => {
 			response.text().then( text => {

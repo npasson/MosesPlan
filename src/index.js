@@ -126,12 +126,7 @@ function setup( safe = false ) {
 		}
 	}
 
-	fetchSiteText( 'extension' )
-		.then( html => {
-			console.log( html );
-			return html;
-		} )
-		.then( buildExtension );
+	fetchSiteText( 'extension' ).then( buildExtension );
 }
 
 /**
