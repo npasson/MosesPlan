@@ -1,5 +1,5 @@
 function closeAllPopups() {
-	$('.mosesplan__currently-editing').removeClass('mosesplan__currently-editing');
+	$( '.mosesplan__currently-editing' ).removeClass( 'mosesplan__currently-editing' );
 	let $prevPopup = $( '.mosesplan__popup' );
 	if ( $prevPopup.length !== 0 ) {
 		$prevPopup.remove();
@@ -589,6 +589,36 @@ function showSettingsPopup() {
 	for ( const setting of settings ) {
 		$popup_form.append( getSettingJQueryObject( setting ) );
 	}
+
+	let $deletion_form = $( `
+		<div class="form-group mosesplan__deletion-form">
+			<h4>${window.mp_strings.deleteDatabase}</h4>
+			<span class="mosesplan__deletion-form__hint" id="deletion-hint"></span>
+			<div class="mosesplan__deletion-form__entry-wrapper">
+				<input class="mosesplan__deletion-form__input" type="text" id="deletion-code" />
+				<button class="mosesplan__deletion-form__button" id="deletion-button" disabled="disabled">${window.mp_strings.deleteDatabase}</button>
+			</div>
+		</div>
+	` );
+
+	let code = getRandomString();
+
+	$deletion_form.find( '#deletion-hint' )[0]
+		.innerHTML = window.mp_strings.deleteDatabaseHint.replace( '$1', `<code>${code}</code>` );
+
+	let $delete_button = $deletion_form.find( '#deletion-button' );
+	$delete_button.on( 'click', ( e ) => {
+		e.preventDefault();
+		document.location.href = addGetParameter( 'mosesplan_action', 'reset' );
+	} );
+
+	$deletion_form.find( '#deletion-code' ).on( 'input', function () {
+		let code_correct = ( $( this ).val() === code );
+		console.log( code_correct );
+		$delete_button.prop( 'disabled', !code_correct );
+	} );
+
+	$popup_form.append( $deletion_form );
 
 	// apply style and add
 	$popup = applyPopupStyles( $popup );

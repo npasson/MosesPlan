@@ -90,5 +90,47 @@
 		&currently-editing {
 			border: 3px solid red;
 		}
+
+		&deletion-form {
+			&__ {
+				&entry-wrapper {
+					display: flex;
+					flex-direction: column;
+					max-width: 300px;
+				}
+
+				&hint {
+					code {
+						user-select: all;
+					}
+				}
+
+				&input {
+					border-radius: 5px 5px 0 0;
+					appearance: none;
+					border: 1px solid #ADADAD;
+					border-bottom: none;
+					padding: 5px 7px;
+
+					margin-top: 5px;
+				}
+
+				&button {
+					border-radius: 0 0 5px 5px;
+
+					color: red;
+
+					&:focus, &:hover {
+						background: red;
+						color: white;
+					}
+
+					&:disabled {
+						background: #FFFFFF;
+						color: #333333;
+					}
+				}
+			}
+		}
 	}
 }

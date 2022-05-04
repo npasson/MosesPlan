@@ -165,7 +165,7 @@ function main() {
 	$( '.mosesplan__version-hint' ).remove();
 	fetchSiteText( 'version' ).then( html => {
 		let $version = $( html );
-		$version.find( '#mosesplan-version-number' ).text( VERSION );
+		$version.find( '#mosesplan-version-number' ).text( `v${VERSION}` );
 		$( $( '#footer > .pull-right' )[0] ).before( $version );
 	} );
 

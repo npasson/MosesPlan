@@ -48,7 +48,9 @@ function getLangObject( language ) {
 				showCustomEventsCheckbox: 'Eigene Events anzeigen',
 				showTutorialsCheckbox: 'Geladene Tutorien anzeigen',
 				saveChanges: 'Änderungen speichern',
-				cancel: 'Abbrechen'
+				cancel: 'Abbrechen',
+				deleteDatabaseHint: 'Gib unten $1 ein und bestätige, um alle gespeicherten Daten zurückzusetzen.',
+				deleteDatabase: 'Lokale Daten zurücksetzen'
 			};
 			break;
 		case 'en':
@@ -92,7 +94,9 @@ function getLangObject( language ) {
 				showCustomEventsCheckbox: 'Show custom events',
 				showTutorialsCheckbox: 'Show loaded tutorials',
 				saveChanges: 'Save changes',
-				cancel: 'Cancel'
+				cancel: 'Cancel',
+				deleteDatabaseHint: 'Enter $1 below and confirm to reset your local data to factory settings.',
+				deleteDatabase: 'Reset Local Data'
 			};
 	}
 

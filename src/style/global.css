@@ -67,5 +67,33 @@
 .mosesplan__currently-editing {
   border: 3px solid red;
 }
+.mosesplan__deletion-form__entry-wrapper {
+  display: flex;
+  flex-direction: column;
+  max-width: 300px;
+}
+.mosesplan__deletion-form__hint code {
+  user-select: all;
+}
+.mosesplan__deletion-form__input {
+  border-radius: 5px 5px 0 0;
+  appearance: none;
+  border: 1px solid #ADADAD;
+  border-bottom: none;
+  padding: 5px 7px;
+  margin-top: 5px;
+}
+.mosesplan__deletion-form__button {
+  border-radius: 0 0 5px 5px;
+  color: red;
+}
+.mosesplan__deletion-form__button:focus, .mosesplan__deletion-form__button:hover {
+  background: red;
+  color: white;
+}
+.mosesplan__deletion-form__button:disabled {
+  background: #FFFFFF;
+  color: #333333;
+}
 
 /*# sourceMappingURL=global.css.map */

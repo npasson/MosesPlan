@@ -38,30 +38,29 @@ function getGetParameter( key ) {
 
 /**
  * Removes a parameter from the GET request and returns the modified URL.
- * Taken from https://stackoverflow.com/a/16941754
  *
  * @param key The key of the parameter to remove.
- * @param sourceURL The original URL.
+ * @param uri The original URL.
  * @returns {string} The modified URL without the parameter.
  */
-function removeGetParameter( key, sourceURL ) {
-	let retval      = sourceURL.split( '?' )[0];
-	let param;
-	let params_arr  = [];
-	let queryString = ( sourceURL.indexOf( '?' ) !== -1 ) ? sourceURL.split( '?' )[1] : '';
-	if ( queryString !== '' ) {
-		params_arr = queryString.split( '&' );
-		for ( let i = params_arr.length - 1; i >= 0; i -= 1 ) {
-			param = params_arr[i].split( '=' )[0];
-			if ( param === key ) {
-				params_arr.splice( i, 1 );
-			}
-		}
-		if ( params_arr.length ) {
-			retval = retval + '?' + params_arr.join( '&' );
-		}
-	}
-	return retval;
+function removeGetParameter( key, uri = document.location.href ) {
+	let url = new URL( uri );
+	url.searchParams.delete( key );
+	return url.toString();
+}
+
+/**
+ * Adds a parameter to the GET request and returns the modified URL.
+ *
+ * @param key The key of the parameter to add.
+ * @param value The value of the parameter to add.
+ * @param uri The original URL.
+ * @returns {string} The modified URL without the parameter.
+ */
+function addGetParameter( key, value, uri = document.location.href ) {
+	let url = new URL( document.location.href );
+	url.searchParams.set( key, value );
+	return url.toString();
 }
 
 /**
@@ -85,4 +84,15 @@ function convertHexToRGBA( hexCode, opacity = 1 ) {
 	}
 
 	return `rgba(${r},${g},${b},${opacity})`;
+}
+
+function getRandomString( length = 8 ) {
+	let chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+
+	let str = '';
+	for ( let i = 0; i < length; ++i ) {
+		str += chars.charAt( Math.floor( Math.random() * chars.length ) );
+	}
+
+	return str;
 }
