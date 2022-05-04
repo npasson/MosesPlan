@@ -20,7 +20,7 @@
         "src/scripts/popover_manager.js",
         "src/scripts/render_manager.js",
         "src/scripts/popup_manager.js",
-        "src/scripts/index.js"
+        "src/index.js"
       ]
     }
   ],
