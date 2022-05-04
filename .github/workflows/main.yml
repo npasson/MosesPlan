@@ -1,0 +1,78 @@
+name: Release new version
+
+# Controls when the action will run.
+on:
+  push:
+    tags:
+      - '*'
+  workflow_dispatch:
+
+jobs:
+  # Job name
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - name: "Checkout"
+        uses: actions/checkout@v2
+
+      - name: "Get tag name"
+        uses: olegtarasov/get-tag@v2.1
+        id: tagName
+
+      - name: "Prepare Firefox release"
+        run: |
+          mv "manifest_firefox.json" "manifest.json"
+
+      - name: "Create Firefox release ZIP"
+        uses: montudor/action-zip@v1
+        with:
+          args: zip -v -r MosesPlan_${{ steps.tagName.outputs.tag }}_Firefox.zip src manifest.json
+
+      - name: "Prepare Firefox release"
+        run: |
+          rm "manifest.json"
+          mv "manifest_chrome.json" "manifest.json"
+
+      - name: "Create Firefox release ZIP"
+        uses: montudor/action-zip@v1
+        with:
+          args: zip -v -r MosesPlan_${{ steps.tagName.outputs.tag }}_Chrome.zip src manifest.json
+
+      - name: Create Release
+        uses: actions/github-script@v2
+        with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
+          script: |
+            console.log('environment', process.versions);
+
+            const fs = require('fs').promises;
+            const path = require('path');
+
+            const { repo: { owner, repo }, sha } = context;
+            console.log({ owner, repo, sha });
+
+            const release = await github.repos.createRelease({
+              owner, repo,
+              tag_name: process.env.GITHUB_REF,
+              draft: true,
+              target_commitish: sha
+            });
+
+            console.log('created release', { release });
+
+            for (let file of await fs.readdir('.')) {
+              if (path.extname(file).toLowerCase() !== '.zip') {
+                continue;
+              }
+            
+              console.log('Uploading', file);
+
+              await github.repos.uploadReleaseAsset({
+                owner, repo,
+                release_id: release.data.id,
+                name: file,
+                data: await fs.readFile(`./${file}`)
+              });            
+            }

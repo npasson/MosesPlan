@@ -1,6 +1,13 @@
 # Changelog
 
-## v0.5 (2022-05-02)
+## v0.5.3 (2022-05-04)
+* Fixed version numbers (oops)
+
+## v0.5.2 (2022-05-04)
+* Fixed Chrome issue
+* Implemented automatic builds
+
+## v0.5.1 (2022-05-02)
 
 * Fixed edit highlight persisting
 
