@@ -2,7 +2,8 @@
  * The extension version.
  * @type {string}
  */
-const VERSION = '0.5.3';
+const VERSION = typeof browser !== 'undefined' ? ( browser.runtime.getManifest().version )
+                                               : ( chrome.runtime.getManifest().version );
 
 /**
  * The settings keys for local storage.
@@ -70,7 +71,6 @@ function insertButtonArray( $mosesplan ) {
 
 	return buttons;
 }
-
 
 function buildExtension( mosesplan_html ) {
 	// remove previous instance, in case plugin is reloaded
