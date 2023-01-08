@@ -37,6 +37,7 @@ function fetchGlobalStyle() {
  * </pre>
  *
  * @param name
+ * @return {Promise<string>}
  */
 function fetchSiteText( name ) {
 	const site_path = `src/sites/${name}.html`;

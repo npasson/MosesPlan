@@ -166,7 +166,7 @@ function main() {
 	fetchSiteText( 'version' ).then( html => {
 		let $version = $( html );
 		$version.find( '#mosesplan-version-number' ).text( `v${VERSION}` );
-		$( $( '#footer > .pull-right' )[0] ).before( $version );
+		$( $( '.status-item.justify-right' )[0] ).before( $version );
 	} );
 
 	// make sure we stop at single day and custom range... for now
